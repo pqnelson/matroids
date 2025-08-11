@@ -1,0 +1,633 @@
+environ
+
+ vocabularies ORDINAL4, FUNCSDOM, TREES_1, NUMBERS, TARSKI, PRE_POLY,
+      PRE_TOPC, SUBSET_1, BVFUNC_2, RCOMP_1, SETFAM_1, CLASSES1,
+      FINSEQ_1, FINSET_1, CARD_1, ARYTM_3, XBOOLE_0, STRUCT_0,
+      ALGSTR_0, ZFMISC_1, NAT_1, INCSP_1, XXREAL_0, TAXONOM2,
+      AOFA_000, ORDERS_1, FUNCT_1, RELAT_1, NATTRA_1, EQREL_1,
+      VECTSP_1, VECTSP_2, RLVECT_3, CARD_3, RLVECT_2, SUPINF_2,
+      REALSET1, BINOP_1, FREEALG, ARYTM_1, RLVECT_5, JORDAN13,
+      FUNCT_2, VECTSP13, CAT_1, GOBOARD5, WELLORD1, PRELAMB, MESFUNC1,
+      MATRIX_0, MATRIX_1, MATRIX_3, MATRIX12, MATRIX13, MATROID0,
+      MATROID1;
+
+ notations TARSKI, XBOOLE_0, SUBSET_1, DOMAIN_1, SETFAM_1, FINSET_1,
+      FINSEQ_1, ORDINAL1, NUMBERS, FUNCT_1, RELSET_1, PARTFUN1,
+      FUNCT_2, EQREL_1, ORDERS_1, TAXONOM2, XCMPLX_0, XXREAL_0, NAT_1,
+      CARD_1, NAT_D, CLASSES1, AOFA_000, STRUCT_0, ALGSTR_0, GROUP_1,
+      RLVECT_1, VECTSP_1, VECTSP_6, VECTSP_7, PRE_TOPC, TDLAT_3,
+      MATRLIN, MATRIX_0, MATRIX_1, MATRIX_3, MATRIX12, MATRIX13,
+      MATRIX15, VECTSP13, PENCIL_1, RANKNULL, MATROID0;
+
+ constructors NAT_D, PARTFUN1, STRUCT_0, COH_SP, TDLAT_3, TAXONOM2,
+      RANKNULL, VECTSP_7, PENCIL_1, MATRIX_1, MATRIX_3, MATRIX12,
+      MATRIX13, MATRLIN, MATRIX15, VECTSP13, REALSET1, RELSET_1,
+      MATROID0;
+
+ registrations FUNCT_1, FINSET_1, CARD_1, RELSET_1, PARTFUN1, FUNCT_2,
+      STRUCT_0, SUBSET_1, PENCIL_1, TDLAT_3, SETFAM_1, EQREL_1,
+      MATRLIN, XREAL_0, ALGSTR_0, BINOM, RLVECT_1, VECTSP_1, VECTSP_7,
+      VECTSP13, ORDINAL1, MATROID0, MATRIX13;
+
+ requirements BOOLE, SUBSET, NUMERALS, ARITHM, REAL;
+
+ definitions TARSKI, FUNCT_1, CLASSES1, TAXONOM2, XBOOLE_0, STRUCT_0,
+      PENCIL_1, FINSET_1, MATRIX_1, MATROID0;
+
+ equalities XBOOLE_0, STRUCT_0, ORDINAL1, MATROID0;
+
+ expansions TARSKI, FUNCT_1, XBOOLE_0, STRUCT_0, PENCIL_1, MATRIX_1,
+      MATROID0;
+
+ theorems TARSKI, XBOOLE_1, ZFMISC_1, CARD_1, COH_SP, PRE_TOPC, NAT_1,
+      CLASSES1, TDLAT_3, XXREAL_0, XREAL_1, XBOOLE_0, FINSEQ_1,
+      SETFAM_1, TAXONOM2, ORDERS_1, FUNCT_2, FUNCT_1, RELAT_1,
+      EQREL_1, WELLORD2, VECTSP_7, VECTSP_9, MATRIX_0, MATRLIN,
+      CARD_2, VECTSP_4, ORDINAL1, CARD_FIL, RANKNULL, VECTSP_1,
+      VECTSP_6, ALGSTR_0, HALLMAR1, MATROID0;
+
+ schemes FUNCT_2, NAT_1;
+
+begin :: Isomorphic matroids
+
+:: Oxley, "Matroid Theory", Example 1.1.8
+definition
+  let M1,M2 be Matroid;
+  pred M1,M2 are_isomorphic means :Def1:
+  ex psi being Function of M1,M2
+  st psi is one-to-one & psi is onto
+   & for X being Subset of M1
+     for Y being Subset of M2 st Y = psi .: X
+     holds X is independent iff Y is independent;
+end;
+
+theorem ThIsoReflexive:
+  for M being Matroid
+  holds M,M are_isomorphic
+proof
+  let M be Matroid;
+  take psi = id M;
+  thus thesis by FUNCT_1:92;
+end;
+
+theorem ThIsoAssoc:
+  for M1,M2,M3 being Matroid
+  st M1,M2 are_isomorphic & M2,M3 are_isomorphic
+  holds M1,M3 are_isomorphic
+proof
+  let M1,M2,M3 be Matroid;
+  assume A1: M1,M2 are_isomorphic;
+  assume A2: M2,M3 are_isomorphic;
+  consider psi1 being Function of M1,M2 such that
+  A3: psi1 is one-to-one & psi1 is onto
+   & for X being Subset of M1
+     for Y being Subset of M2 st Y = psi1 .: X
+     holds X is independent iff Y is independent
+  by A1;
+  consider psi2 being Function of M2,M3 such that
+  A4: psi2 is one-to-one & psi2 is onto
+   & for Y being Subset of M2
+     for Z being Subset of M3 st Z = psi2 .: Y
+     holds Y is independent iff Z is independent
+  by A2;
+  reconsider psi3 = psi2 * psi1 as Function of M1, M3;
+  take psi3;
+  A5: psi3 is one-to-one & psi3 is onto by A3,A4,FUNCT_2:27;
+  for X being Subset of M1
+  for Z being Subset of M3 st Z = psi3 .: X
+  holds X is independent iff Z is independent
+  proof
+    let X be Subset of M1;
+    let Z be Subset of M3;
+    assume Z = psi3 .: X;
+    then Z = psi2 .: (psi1 .: X) by RELAT_1:126;
+    then Z is independent iff psi1 .: X is independent by A4;
+    hence thesis by A3;
+  end;
+  hence thesis by A5;
+end;
+
+theorem ThIsoSym:
+  for M1,M2 being Matroid
+  st M1,M2 are_isomorphic
+  holds M2,M1 are_isomorphic;
+
+definition
+  let M1, M2 be Matroid;
+  redefine pred M1,M2 are_isomorphic;
+  reflexivity by ThIsoReflexive;
+  symmetry by ThIsoSym;
+end;
+
+begin :: Vector matroids
+
+reserve R for Ring; :: non empty doubleLoopStr;
+reserve A for Matrix of R;
+
+definition
+  let R, A;
+  func columns A -> Subset of R ^* (len A) equals
+  {Col(A,i) where i is Nat : i in Seg (len A)};
+  coherence;
+end;
+
+theorem ThCols:
+  for c being object
+  holds c in columns A iff ex i being Nat st c = Col(A, i) & i in
+  Seg(len A);
+
+theorem
+  for m,n being Nat
+  for A being Matrix of m,n,R
+  holds columns A is Subset of R ^* m
+  by MATRIX_0:def 2;
+
+definition
+  let R, A;
+  func vector_matroid A -> strict SubsetFamilyStr means :DefVectorMatroid:
+  the carrier of it = Seg (width A)
+  & for C being Subset of R ^* (len A) st C c= columns A
+    for I being Subset of Seg (width A)
+    st (for i being Nat holds i in I iff Col(A, i) in C)
+    holds I in the_family_of it iff C is linearly-independent;
+  existence
+  proof
+    set Fam = {I where I is Subset of Seg (width A) :
+    ex C being Subset of R ^* (len A)
+    st C c= columns A & (for i being Nat holds i in I iff Col(A, i) in C)
+    & C is linearly-independent};
+
+    Fam is Element of bool (bool (Seg (width A)))
+    proof
+      for F being object st F in Fam holds F in bool (Seg (width A))
+      proof
+        let F be object;
+        assume F in Fam;
+        then ex I being Subset of Seg (width A) st F = I &
+        ex C being Subset of R ^* (len A)
+        st C c= columns A & (for i being Nat holds i in I iff Col(A, i) in C)
+        & C is linearly-independent;
+        hence F in bool (Seg (width A));
+      end;
+      then Fam c= bool (Seg (width A));
+      then Fam in bool (bool (Seg (width A)));
+      hence thesis;
+    end;
+    then reconsider Fam as Subset-Family of Seg (width A);
+    reconsider M = TopStruct(# Seg(width A), Fam #) as strict SubsetFamilyStr;
+    take M;
+    A1: the carrier of M = Seg (width A);
+    for C being Subset of R ^* (len A) st C c= columns A
+    for I being Subset of Seg (width A)
+    st (for i being Nat holds i in I iff Col(A, i) in C)
+    holds I in the_family_of M iff C is linearly-independent
+    proof
+      let C be Subset of R ^* (len A);
+      assume A2: C c= columns A;
+      let I be Subset of Seg (width A);
+      assume A3: for i being Nat holds i in I iff Col(A, i) in C;
+      hereby 
+        assume A4: I in the_family_of M;
+        then ex F being Subset of Seg (width A) st F = I &
+        ex C2 being Subset of R ^* (len A)
+        st C2 c= columns A & (for i being Nat holds i in F iff Col(A, i) in C2)
+        & C2 is linearly-independent;
+        then consider C2 being Subset of R ^* (len A) such that
+        A5: C2 c= columns A and
+        A6: (for i being Nat holds i in I iff Col(A, i) in C2) and
+        A7: C2 is linearly-independent;
+        for x being object
+        holds x in C iff x in C2
+        proof
+          let x be object;
+          thus x in C implies x in C2
+          proof
+            assume A8: x in C;
+            then x in columns A by A2;
+            then consider i9 being Nat such that
+            A9: x = Col(A, i9) & i9 in Seg(len A);
+            i9 in I by A3,A8,A9;
+            hence x in C2 by A6,A9;
+          end;
+          assume A9: x in C2;
+          then x in columns A by A5;
+          then consider i9 being Nat such that
+          A10: x = Col(A, i9) & i9 in Seg(len A);
+          i9 in I by A6,A9,A10;
+          hence x in C by A3,A10;
+        end;
+        then C = C2 by TARSKI:2;
+        hence C is linearly-independent by A7;
+      end;
+      assume A5: C is linearly-independent;
+      hence I in the_family_of M by A2,A3;
+    end;
+    hence thesis;
+  end;
+  uniqueness;
+end;
+
+registration
+  let R, A;
+  cluster vector_matroid A -> non empty;
+  correctness;
+  cluster vector_matroid A -> non void;
+  correctness;
+  cluster vector_matroid A -> subset-closed;
+  correctness;
+  cluster vector_matroid A -> with_exchange_property;
+  correctness;
+  cluster vector_matroid A -> finite-degree;
+  correctness;
+end;
+
+:: Double check the registrations work
+theorem
+  vector_matroid A is Matroid;
+
+:: The [matrix] rank of a matroid representation (viewed as a matrix) = the
+:: [matroid] rank of the vector matroid of the matrix
+theorem
+  the_rank_of A = Rnk (vector_matroid A);
+
+begin :: Representations
+
+definition
+  let R;
+  let IT be Matroid;
+  attr IT is R-representable means :DefRepable:
+  ex A being Matrix of R
+  st IT, vector_matroid A are_isomorphic;
+end;
+
+registration
+  let R, A;
+  cluster vector_matroid A -> R-representable;
+  correctness by ThIsoReflexive;
+end;
+
+registration
+  let R;
+  cluster R-representable for Matroid;
+  existence
+  proof
+    set A = the Matrix of R;
+    take M = vector_matroid A;
+    thus thesis;
+  end;
+end;
+
+reserve M for R-representable Matroid;
+
+definition
+  let R;
+  let A; :: be Matrix of R;
+  let M; :: be R-representable Matroid;
+  pred A represents M means :DefRepresents:
+  M, vector_matroid A are_isomorphic;
+end;
+
+definition
+  let R;
+  let M; :: be R-representable Matroid;
+  mode Representation of M -> Matrix of R means :DefRep:
+  it represents M;
+  existence
+  proof
+    consider A being Matrix of R such that
+    A1: M, vector_matroid A are_isomorphic
+    by DefRepable;
+    take A;
+    thus thesis by A1;
+  end;
+end;
+
+registration
+  let R, M;
+  let m,n be Nat;
+  cluster m,n-size for Representation of M;
+  existence;
+end;
+
+definition
+  let R, M;
+  let m,n be Nat;
+  mode Representation of M,m,n is m,n-size Representation of M;
+end;
+
+:: Oxley, "Matroid Theory", Chapter 2, section 2 opens with the
+:: observation that if A is an m-by-n matrix of F, and if M[A] is a
+:: vector_matroid of A, then M[A] does not uniquely determine A.
+:: The following operations leaves M invariant:
+
+:: Oxley 2.2.1 --- "Tr" abbreviates "Transformation"
+theorem Tr1:
+  for m,n being Nat
+  for M being R-representable Matroid
+  for A being Matrix of m,n,R st A represents M
+  for l,k being Nat
+  holds InterchangeLine(A, l, k) represents M;
+
+:: Oxley 2.2.2
+theorem Tr2:
+  for m,n being Nat
+  for M being R-representable Matroid
+  for A being Matrix of m,n,R st A represents M
+  for l being Nat
+  for a being Element of R st a <> 0.R
+  holds ScalarXLine(A, l, a) represents M;
+
+:: Oxley 2.2.3
+theorem Tr3:
+  for m,n being Nat
+  for M being R-representable Matroid
+  for A being Matrix of m,n,R st A represents M
+  for l,k being Nat st k in dom A
+  for a being Element of R st a <> 0.R
+  holds RlineXScalar(A, l, k, a) represents M;
+
+:: Oxley 2.2.4
+:: NB: "A ^ B" is Mizar notation for \begin{pmatrix}A\\\hrule B\end{pmatrix}
+:: (adjoining the rows of B after the rows of A).
+theorem Tr4:
+  for l,m,n being Nat
+  for M being R-representable Matroid
+  for A being Matrix of m,n,R
+  holds A represents M iff A ^ 0.(R,l,n) represents M;
+
+:: Oxley 2.2.5
+theorem Tr5:
+  for m,n being Nat st m > 0 & n > 0
+  for M being R-representable Matroid
+  for A being Matrix of m,n,R st A represents M
+  for l,k being Nat st l in Seg(width A) & k in Seg(width A)
+  holds InterchangeCol(A, l, k) represents M;
+
+:: Oxley 2.2.6 --- not needed to prove every rep yields a standard rep
+theorem Tr6:
+  for m,n being Nat st m > 0 & n > 0
+  for M being R-representable Matroid
+  for A being Matrix of m,n,R st A represents M
+  for l being Nat st l in Seg(width A)
+  for a being Element of R st a <> 0.R
+  holds ScalarXCol(A, l, a) represents M;
+
+:: Oxley 2.2.7 notes that replacing each matrix entry by its image
+:: under some automorphism of F produces another matrix A2
+:: such that A2 represents M...but it is not used in Chapter 2 (or
+:: needed until Chapter 6)...so I am ignoring it.
+
+:: Oxley Chapter 2, Section 2, offers the following prose describing
+:: the proof (pp.77--78):
+:: \begin{quote}
+:: Assume that the matrix $A$ is non-zero. It is well known and not
+:: difficult to check that, by a sequence of operations of types
+:: 2.2.1--2.2.5, one can reduce $A$ to the form $[I_{r}|D]$ where $I_{r}$
+:: is the $r\times r$ identity matrix and $D$ is some $r\times(n-r)$
+:: matrix over $F$. Evidently $r = r(M)$. Suppose that the columns of
+:: $[I_{r}|D]$ are labelled, in order, $e_{1}$, $e_{2}$, \dots,
+:: $e_{n}$. Then $\{e_{1}, e_{2}, \dots, e_{r}\}$ is a basis $B$ of
+:: $M$. Moreover, it is natural to label the rows of $D$, in order, by
+:: $e_{1}$, $e_{2}$, \dots, $e_{r}$. Thus $M[A]$ can be represented, as
+:: in Figure 2.5, both by the matrix $[I_{r}|D]$, whose columns are
+:: labelled $e_{1}$, $e_{2}$, \dots, $e_{n}$, and by the matrix $D$,
+:: whose rows are labelled $e_{1}$, $e_{2}$, \dots, $e_{r}$ and whose
+:: columns are labelled $e_{r+1}$, $e_{r+2}$, \dots, $e_{n}$. We shall
+:: refer to both $[I_{r}|D]$ and $D$ as \emph{standard representative matrices}
+:: for $M$ and will sometimes add \emph{with respect to $\{e_{1}, e_{2}, \dots,
+:: e_{r}\}$} to this description. To limit possible ambiguities with this
+:: terminology, we shall also refer to $D$ as a \emph{reduced standard
+:: representative matrix}. Note that, in $[I_{r}|D]$, only the columns are
+:: labelled, whereas both the rows and columns are labelled in $D$.
+:: \end{quote}
+
+
+:: Following the conventions of the paper, I am defining the "standard"
+:: representation to be the matrix D such that [I_{r} | D] is the
+:: "full" representation
+definition
+  let R;
+  let M; :: be R-representable Matroid;
+  let IT be Representation of M;
+  attr IT is full means :DefFull:
+  ex D being Matrix of R
+  st IT = 1.(R,len IT) ^^ D; :: = [I_{r} | D] in block form
+end;
+
+:: Helper theorem which I think is missing from Mizar
+theorem
+  for A,B being Matrix of R
+  st len A = len B :: number of rows in A = number of rows in B
+  for i being Nat
+  holds Line(A ^^ B, i) = Line(A, i) ^ Line(B, i);
+
+theorem
+  for A being Representation of M
+  st len A <= width A
+   & (width A = 0 implies len A = 0)
+   & (for i,j being Nat st [i,j] in Indices 1.(R,len A)
+      holds 1.(R, len A) * (i,j) = A * (i,j))
+  holds A is full;
+
+theorem ThFullRepExists:
+  ex A being Representation of M
+  st A is full;
+
+registration
+  let R,M;
+  cluster full for Representation of M;
+  existence by ThFullRepExists;
+end;
+
+definition
+  let R;
+  let M; :: be R-representable Matroid;
+  let IT be Representation of M;
+  attr IT is standard means
+  1.(R,len IT) ^^ IT represents M;
+end;
+
+registration
+  let R;
+  let M; :: be R-representable Matroid;
+  cluster standard for Representation of M;
+  existence;
+end;
+
+:: Oxley, in passim in 2.2, notes there is a sequence of transformations `Fam`
+:: which will change a Representation of a matroid into a full
+:: Representation of the matroid.
+::
+:: This would be simplified if we added the hypotheses
+:: Rnk(vector_matroid A) = m & m <= n, but I was not sure if that was
+:: too divergent from Oxley or not...
+theorem ThOxleyFullRep:
+  for m,n being Nat
+  for R being Field
+  for A being Matrix of m,n,R
+  for G being Basis of vector_matroid A
+  ex Fam,P being FinSequence of m-Matrices_over R
+  st ex S being Representation of vector_matroid A
+  st (for i being Nat st i in dom Fam
+      holds (ex l,k being Nat st Fam.i = InterchangeLine(1.(R,m),l,k))
+         or (ex l being Nat, a being Element of R
+             st Fam.i = ScalarXLine(1.(R,m), l, a))
+         or (ex l,k being Nat, a being Element of R
+             st Fam.i = RlineXScalar(1.(R,m), l, k, a))
+         or (ex l,k being Nat st Fam.i = InterchangeCol(1.(R,m),l,k)))
+  :: P is the sequence obtained by applying Fam to A
+  :: (i.e., $P_{1}=A$ and $P_{i+1} = F_{i}P_{i}$)
+  & len P = 1 + len Fam
+  & P.1 = A
+  & (for i being Nat st i in dom P & i in dom Fam
+     for Fami being Matrix of m,R st Fami = Fam.i
+     for Pi being Matrix of m,n,R st Pi = P.i
+     holds P.(i + 1) = Fami * Pi)
+  :: Now, the last item in $P$ is the full representation, possibly
+  :: padded with zero rows on the bottom
+  & P.(len P) = S ^^ 0.(R, len A -' card G, n)
+  & S is full
+  & len S = card G
+  & vector_matroid S = vector_matroid A;
+
+:: lemma StandardRepr_toMatroid_isBase_X:
+theorem StandardReprToMatroidIsBaseX:
+  for S being standard Representation of M
+  holds Seg (len S) is Basis of vector_matroid S;
+
+:: lemma Matrix.exists_standardRepr_isBase
+theorem
+  for m,n being Nat
+  for R being Skew-Field
+  for A being Matrix of m,n,R
+  for G being Basis of vector_matroid A
+  ex S being Representation of vector_matroid A
+  st S is standard
+   & len S = card G
+   & vector_matroid S = vector_matroid A;
+
+begin :: Totally unimodular matrices
+:: Determinants are defined (meaningfully) for matrices over
+:: commutative rings
+reserve R for commutative Ring;
+
+registration
+  cluster empty finite without_zero for Subset of NAT;
+  existence
+  proof
+    {} NAT is Subset of NAT;
+    hence thesis;
+  end;
+  cluster non empty finite without_zero for Subset of NAT;
+  existence
+  proof
+    reconsider b1 = {1} as Subset of NAT;
+    take b1;
+    b1 is without_zero by FINSEQ_1:2, SETFAM_1:def 8, TARSKI:def 1;
+    hence thesis;
+  end;
+end;
+
+definition
+  let R;
+  let k be Nat;
+  let IT be Matrix of R;
+  attr IT is k-partially-unimodular means
+  for cs,rs being finite without_zero Subset of NAT
+  st rs c= Seg (width IT) & card rs = k
+   & cs c= Seg (len IT) & card cs = k
+  for A being Matrix of k,R st A = Segm(IT,rs,cs)
+  holds Det A = 1.R or Det A = 0.R or Det A = - 1.R;
+end;
+
+definition
+  let R;
+  let IT be Matrix of R;
+  attr IT is totally-unimodular means
+  for k being Nat
+  st k <= min(len IT, width IT)
+  holds IT is k-partially-unimodular;
+end;
+
+:: Tell Mizar that the identity matrix is totally unimodular
+registration
+  let R;
+  let n be Nat;
+  cluster 1.(R,n) -> totally-unimodular;
+  correctness;
+end;
+
+definition
+  let R;
+  let IT be Matrix of R;
+  attr IT is TU-preserving means
+  for A being Matrix of R st A is totally-unimodular
+  holds (width IT = len A implies IT*A is totally-unimodular)
+  & (width A = len IT implies A*IT is totally-unimodular);
+end;
+
+theorem TUPres1:
+  for m,n being Nat
+  for l,k being Nat
+  holds InterchangeLine(1.(R,m), l, k) is TU-preserving;
+
+theorem TUPres2:
+  for m,l being Nat
+  for a being Element of R st a <> 0.R
+  holds ScalarXLine(1.(R,m), l, a) is TU-preserving;
+
+theorem TUPres3:
+  for m,l,k being Nat
+  for a being Element of R st a <> 0.R
+  holds RlineXScalar(1.(R,m), l, k, a) is TU-preserving;
+
+theorem TUPres5:
+  for m,l,k being Nat st l in 1.(R,m) & k in 1.(R,m)
+  holds InterchangeCol(1.(R,m), l, k) is TU-preserving;
+
+theorem
+  for m,n being Nat
+  for R being Field
+  for A being Matrix of m,n,R st A is totally-unimodular
+  for G being Basis of vector_matroid A
+  :: ex Fam,P being FinSequence of m-matrices_over R
+  :: st ex S being Representation of vector_matroid A
+  :: st (for i being Nat st i in dom Fam holds Fam.i is TU-preserving)
+  :: & len P = 1 + len Fam & P.1 = A &
+  :: (for i being Nat st i in dom P & i in dom Fam holds P.(i + 1) = Fam.i * P.i)
+  :: & P.(len P) = S & S is standard & len S = card G
+  :: & vector_matroid S = vector_matroid A
+  :: & S is totally-unimodular
+ex S being Representation of vector_matroid A
+  st len S = card G
+   & S is standard
+   & vector_matroid S = vector_matroid A
+   & S is totally-unimodular;
+
+
+:: lemma Matrix.exists_standardRepr_isBase_isTotallyUnimodular
+theorem
+  for m,n being Nat
+  for R being Field
+  for A being Matrix of m,n,R st A is totally-unimodular
+  for G being Basis of vector_matroid A
+  ex S being Representation of vector_matroid A
+  st len S = card G
+   & S is standard
+   & vector_matroid S = vector_matroid A
+   & S is totally-unimodular;
+  
+
+:: Matrix.exists_standardRepr_isBase
+:: theorem
+::   for m,n being Nat
+::   for A being Matrix of m,n,R st A is totally-unimodular
+::   for G being Basis of vector_matroid A
+::   ex S being StandardMatroidRep of R
+::   st len S = card G
+::   & S is totally-unimodular
+::   :: shouldn't this be an isomorphism and not an equality?
+::   & vector_matroid S = vector_matroid A;
+
+
+
