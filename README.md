@@ -68,17 +68,21 @@ The formalization follows Oxley:
    Matroids when there is a matrix `Mat` over R such that
    `vector_matroid Mat` is isomorphic to the given matroid (using the
    equivalence relation formalized back from item (1)).
-4. The mode ["type"] `Representation of M` is defined parametrized by
-   `M being R-representable Matroid` as a matrix such that the
-   matrix's vector matroid is isomorphic to `M`.
-5. The attribute `full` is defined for `Representation of M` for when
+4. The attribute `M-representation` asserts a matrix is a
+   representation of `M` (i.e., its vector matroid is isomorphic to `M`)
+5. The mode ["type"] `Representation of M` is defined as an
+   abbreviation for `M-representation Matrix of R`. This addresses
+   concerns that the Mizar formalization is somehow "different" than
+   the Lean formalization: a Representation of M _really is a Matrix_
+   which just so happens to satisfy some property.
+6. The attribute `full` is defined for `Representation of M` for when
    the representation can be written as $[I_{r} | D]$ in block form.
-6. The attribute `standard` is defined for `Representation of M` for
+7. The attribute `standard` is defined for `Representation of M` for
    when the representation (call it $D$) is such that $[I_{r} | D]$ is
    a full representation of `M`.
    
 Note the divergence is caused by Mizar's classical semantics: a type
-cannot be empty in Mizar, otherwise we would end up with a free logic
+cannot be empty in Mizar, otherwise we would end up with a [free logic](https://plato.stanford.edu/entries/logic-free/)
 (not a classical logic). This would result in surprising consequences
 discussed before on the Mizar mailing list (e.g., Freek Wiedijk's 
 [Why do Mizar types need to be non empty?](http://mizar.uwb.edu.pl/forum/archive/0210/msg00001.html),
@@ -95,3 +99,26 @@ for matroids.
 We can take advantage of the attribute system of Mizar, and register
 things like vector matroids over R are always R-representable. This
 would be impossible if we formalized the notion using predicates.)
+
+
+## Oxley's Full Representation Theorem
+
+The first difference is in Oxley's full representation
+theorem (in the Mizar formalization, it is `theorem ThOxleyFullRep:`).
+Basically: given an $m\times n$ matrix $A$ with entries in a
+field $\mathbb{F}$, and any basis $G$ of the vector matroid of $A$,
+there exists a sequence of elementary transformations
+$\mathcal{F}_{i}$ such that 
+
+$`(\prod_{i}\mathcal{F}_{i})A = \begin{bmatrix}S\\ \mathbf{0}_{m-|G|,n}\end{bmatrix}`$
+
+where $S$ is a $|G|\times n$ matrix which is a standard representation
+of the vector matroid of $A$, and $\mathbf{0}_{m-|G|,n}$ is an
+$(m-|G|)\times n$ zero matrix.
+
+Moreover, each $\mathcal{F}_{i}$ is an elementary row operation (i.e.,
+swapping two rows, multiplying a row by a nonzero scalar, or adding a
+nonzero multiple of one row to another).
+
+Note that, stated as such, we make explicit that $S$ may have fewer
+than $m$ rows (whereas Oxley left it implicitly understood).

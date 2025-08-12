@@ -4,4 +4,10 @@ VTU-preserving
 Ocolumns
 Ovector_matroid
 V-representable
+V-representation
 MRepresentation
+Opivot_index
+Opivot
+Rin_row_echelon_form
+Rin_reduced_row_echelon_form
+Velementary_row
