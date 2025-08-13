@@ -112,7 +112,6 @@ theorem Th3:
   for M1,M2 being Matroid
   st M1,M2 are_isomorphic
   holds M2,M1 are_isomorphic;
-::>                        *4
 
 definition
   let M1, M2 be Matroid;
@@ -135,7 +134,6 @@ definition
   func columns A -> Subset of R ^* (len A) equals
   {Col(A,i) where i is Nat : i in Seg (len A)};
   coherence;
-::>       *4
 end;
 
 theorem Th5:
@@ -232,26 +230,20 @@ definition
     hence thesis;
   end;
   uniqueness;
-::>        *4,4
 end;
 
 registration
   let R, A;
   cluster vector_matroid A -> non empty;
   correctness;
-::>         *4
   cluster vector_matroid A -> non void;
   correctness;
-::>         *4
   cluster vector_matroid A -> subset-closed;
   correctness;
-::>         *4
   cluster vector_matroid A -> with_exchange_property;
   correctness;
-::>         *4
   cluster vector_matroid A -> finite-degree;
   correctness;
-::>         *4,4
 end;
 
 :: Double check the registrations work
@@ -262,7 +254,6 @@ theorem
 :: [matroid] rank of the vector matroid of the matrix
 theorem
   the_rank_of A = Rnk (vector_matroid A);
-::>                                    *4,4
 
 begin :: Representations
 
@@ -361,7 +352,6 @@ theorem Th11:
   for A being Matrix of m,n,R st A represents M
   for l,k being Nat
   holds InterchangeLine(A, l, k) represents M;
-::>                                         *4
 
 :: Oxley 2.2.2
 theorem Th12:
@@ -371,7 +361,6 @@ theorem Th12:
   for l being Nat
   for a being Element of R st a <> 0.R
   holds ScalarXLine(A, l, a) represents M;
-::>                                     *4,4
 
 :: Oxley 2.2.3
 theorem Th13:
@@ -381,7 +370,6 @@ theorem Th13:
   for l,k being Nat st k in dom A
   for a being Element of R st a <> 0.R
   holds RlineXScalar(A, l, k, a) represents M;
-::>                                         *4,4
 
 :: Oxley 2.2.4
 :: NB: "A ^ B" is Mizar notation for \begin{pmatrix}A\\\hrule B\end{pmatrix}
@@ -391,7 +379,6 @@ theorem Th14:
   for M being R-representable Matroid
   for A being Matrix of m,n,R
   holds A represents M iff A ^ 0.(R,l,n) represents M;
-::>                                                 *4,4
 
 :: Oxley 2.2.5
 theorem Th15:
@@ -400,7 +387,6 @@ theorem Th15:
   for A being Matrix of m,n,R st A represents M
   for l,k being Nat st l in Seg(width A) & k in Seg(width A)
   holds InterchangeCol(A, l, k) represents M;
-::>                                        *4
 
 :: Oxley 2.2.6 --- not needed to prove every rep yields a standard rep
 theorem Th16:
@@ -410,7 +396,6 @@ theorem Th16:
   for l being Nat st l in Seg(width A)
   for a being Element of R st a <> 0.R
   holds ScalarXCol(A, l, a) represents M;
-::>                                    *4,4
 
 :: Oxley 2.2.7 notes that replacing each matrix entry by its image
 :: under some automorphism of F produces another matrix A2
@@ -623,66 +608,67 @@ reserve m,n for Nat;
 :: If A is already in row echelon form, return the sequence <*1.(R,m)*>
 theorem Th18:
   for A being Matrix of F
-  ex Fam being FinSequence of m-Matrices_over F
-  st len Fam > 0 & Fam.1 is elementary_row Matrix of m,F
+  ex Fam being FinSequence of (len A)-Matrices_over F
+  st len Fam > 0 & Fam.1 is elementary_row Matrix of (len A),F
   & (for i being Nat st 1 < i & i < len Fam
-     for Fi being Matrix of m,F st Fi = Fam.i
-     ex B being elementary_row Matrix of m,F
+     for Fi being Matrix of (len A),F st Fi = Fam.i
+     ex B being elementary_row Matrix of (len A),F
      st Fam.(i + 1) = B * Fi)
-  & (ex B being Matrix of m,F
+  & (ex B being Matrix of (len A),F
      st B = Fam.(len Fam)
       & B * A in_row_echelon_form);
-::>                              *4
 
 theorem Th19:
   for A being Matrix of F st A in_row_echelon_form
-  for F1 being Matrix of m,F
-  ex Fam being FinSequence of m-Matrices_over F
+  for F1 being Matrix of (len A),F
+  ex Fam being FinSequence of (len A)-Matrices_over F
   st (for i being Nat st i < len Fam
-      for Fi being Matrix of m,F
+      for Fi being Matrix of (len A),F
       st ((i = 0 implies Fi = F1) & (i <> 0 implies Fi = Fam.i))
-     ex B being elementary_row Matrix of m,F
+     ex B being elementary_row Matrix of (len A),F
      st ((i+1) in dom Fam implies Fam.(i + 1) = B * Fi))
-  & (ex B being Matrix of m,F
+  & (ex B being Matrix of (len A),F
      st B = Fam.(len Fam)
       & B * A in_reduced_row_echelon_form);
-::>                                      *4
 
 :: Gaussian elimination, in all its gory details!
 ::$N Gaussian Elimination
 theorem Th20:
   for A being Matrix of F
-  ex Fam being FinSequence of m-Matrices_over F
-  st len Fam > 0 & Fam.1 is elementary_row Matrix of m,F
+  ex Fam being FinSequence of (len A)-Matrices_over F
+  st len Fam > 0 & Fam.1 is elementary_row Matrix of (len A),F
   & (for i being Nat st 1 <= i & i < len Fam
-     for Fi being Matrix of m,F st Fi = Fam.i
-     ex B being elementary_row Matrix of m,F
+     for Fi being Matrix of (len A),F st Fi = Fam.i
+     ex B being elementary_row Matrix of (len A),F
      st Fam.(i + 1) = B * Fi)
-  & (ex B being Matrix of m,F
+  & (ex B being Matrix of (len A),F
      st B = Fam.(len Fam)
       & B * A in_reduced_row_echelon_form)
 proof
   let A be Matrix of F;
-  consider Fam1 being FinSequence of m-Matrices_over F such that
-  A1: len Fam1 > 0 & Fam1.1 is elementary_row Matrix of m,F and
+  consider Fam1 being FinSequence of (len A)-Matrices_over F such that
+  A1: len Fam1 > 0 & Fam1.1 is elementary_row Matrix of (len A),F and
   A2: for i being Nat st 1 < i & i < len Fam1
-      for Fi being Matrix of m,F st Fi = Fam1.i
-      ex B being elementary_row Matrix of m,F
+      for Fi being Matrix of (len A),F st Fi = Fam1.i
+      ex B being elementary_row Matrix of (len A),F
       st Fam1.(i + 1) = B * Fi and
-  A3: ex B being Matrix of m,F
+  A3: ex B being Matrix of (len A),F
       st B = Fam1.(len Fam1)
        & B * A in_row_echelon_form
   by Th18;
-  consider B1 being Matrix of m,F such that
+  consider B1 being Matrix of (len A),F such that
   A4: B1 = Fam1.(len Fam1) & B1 * A in_row_echelon_form
   by A3;
-  consider Fam2 being FinSequence of m-Matrices_over F such that
+  width B1 = len A by MATRIX_0:24;
+  then len (B1 * A) = len B1 by MATRIX_3:def 4
+                   .= len A by MATRIX_0:24;
+  then consider Fam2 being FinSequence of (len A)-Matrices_over F such that
   A5: (for i being Nat st i < len Fam2
-       for Fi being Matrix of m,F
+       for Fi being Matrix of (len A),F
        st ((i = 0 implies Fi = B1) & (i <> 0 implies Fi = Fam2.i))
-       ex B being elementary_row Matrix of m,F
+       ex B being elementary_row Matrix of (len A),F
        st ((i+1) in dom Fam2 implies Fam2.(i + 1) = B * Fi))
-    & (ex B2 being Matrix of m,F
+    & (ex B2 being Matrix of (len A),F
        st B2 = Fam2.(len Fam2)
        & B2 * (B1 * A) in_reduced_row_echelon_form)
   by A4,Th19;
@@ -695,28 +681,228 @@ proof
     hence thesis by FINSEQ_1:22;
   end;
 
-  thus Fam.1 is elementary_row Matrix of m,F
+  thus Fam.1 is elementary_row Matrix of (len A),F
   proof
     0 < 0 + len Fam1 by A1;
     then 1 <= len Fam1 by NAT_1:19;
     then 1 in Seg (len Fam1) by FINSEQ_1:1;
-    then A6: 1 in dom Fam1 by FINSEQ_1:def 3;
-    then 1 in dom Fam by FINSEQ_1:26, TARSKI:def 3;
-    then Fam.1 = Fam1.1 by A6, FINSEQ_1:def 7;
+    then 1 in dom Fam1 by FINSEQ_1:def 3;
+    then Fam.1 = Fam1.1 by FINSEQ_1:def 7;
     hence thesis by A1;
   end;
   thus for i being Nat st 1 <= i & i < len Fam
-       for Fi being Matrix of m,F st Fi = Fam.i
-       ex B being elementary_row Matrix of m,F
+       for Fi being Matrix of (len A),F st Fi = Fam.i
+       ex B being elementary_row Matrix of (len A),F
        st Fam.(i + 1) = B * Fi by A2,A3,A5;
-::>                             *4
-  thus ex B being Matrix of m,F
+  thus ex B being Matrix of (len A),F
        st B = Fam.(len Fam)
         & B * A in_reduced_row_echelon_form by A2,A3,A4,A5;
-::>                                          *4
 end;
 
 begin :: Elementary transformations on vector Matroids
+
+scheme
+IndStep { R() -> Ring, P[Matrix of R()],
+          A() -> Matrix of R() } :
+  for Fam being FinSequence of (len A())-Matrices_over R()
+  st len Fam > 0 & Fam.1 is elementary_row Matrix of len A(),R()
+   & (for i being Nat st 1 <= i & i < len Fam
+      for Fi being Matrix of (len A()), R() st Fi = Fam.i
+      ex B being elementary_row Matrix of (len A()), R()
+      st Fam.(i + 1) = B * Fi)
+  for E being Matrix of (len A()), R() st E = Fam.(len Fam)
+  holds P[E * A()]
+provided
+A1: P[A()] and
+A2: for A0 being Matrix of R() st P[A0]
+    for E being elementary_row Matrix of R()
+    st width E = len A0
+    holds P[E * A0]
+proof
+  defpred Q[Nat] means
+  for Fam being FinSequence of (len A())-Matrices_over R()
+  st len Fam = $1 & len Fam > 0 & Fam.1 is elementary_row Matrix of R()
+   & (for i being Nat st 1 <= i & i < len Fam
+      for Fi being Matrix of (len A()), R() st Fi = Fam.i
+      ex B being elementary_row Matrix of (len A()), R()
+      st Fam.(i + 1) = B * Fi)
+  for E being Matrix of (len A()), R() st E = Fam.(len Fam)
+  holds P[E * A()];
+  A3: Q[0];
+  A4: for k being Nat st Q[k] holds Q[k + 1]
+  proof
+    let k be Nat;
+    assume A5: Q[k];
+    let Fam be FinSequence of (len A())-Matrices_over R();
+    assume A6: len Fam = (k + 1)
+    & len Fam > 0 & Fam.1 is elementary_row Matrix of R()
+    & (for i being Nat st 1 <= i & i < len Fam
+      for Fi being Matrix of (len A()), R() st Fi = Fam.i
+      ex B being elementary_row Matrix of (len A()), R()
+      st Fam.(i + 1) = B * Fi);
+    let E be Matrix of len A(), R();
+    assume A7: E = Fam.(len Fam);
+    per cases by NAT_1:3;
+    suppose k = 0;
+      then A8: len Fam = 1 by A6;
+      then 1 in Seg(len Fam) by FINSEQ_1:3;
+      then 1 in dom Fam by FINSEQ_1:def 3;
+      then Fam.1 in rng Fam by FUNCT_1:3;
+      then Fam.1 in (len A())-Matrices_over R();
+      then reconsider F1 = Fam.1 as Matrix of (len  A()), R() by MATRIX_1:2;
+      A9: width E = len A() by MATRIX_0:24;
+      F1 is elementary_row by A6;
+      then E is elementary_row by A7,A8;
+      hence thesis by A1,A2,A9;
+    end;
+    suppose A10: k > 0;
+      then 0 < 0 + k;
+      then A11: 1 <= k by NAT_1:19;
+      reconsider GG = Fam|(Seg k) as FinSequence of (len A())-Matrices_over R()
+      by FINSEQ_1:18;
+      A12: k < len Fam by A6,NAT_1:13;
+      A13: len GG = k
+      proof
+        k <= len Fam by A12;
+        then Seg k c= Seg (len Fam) by FINSEQ_1:5;
+        then Seg k c= dom Fam by FINSEQ_1:def 3;
+        then k in NAT & Seg k = dom (Fam | (Seg k))
+        by ORDINAL1:def 12, RELAT_1:62;
+        then len GG = k by FINSEQ_1:def 3;
+        hence thesis;
+      end;
+      len GG = k & len GG > 0 & GG.1 is elementary_row Matrix of R()
+      & (for i being Nat st 1 <= i & i < len GG
+         for Fi being Matrix of (len A()), R() st Fi = GG.i
+         ex B being elementary_row Matrix of (len A()), R()
+         st GG.(i + 1) = B * Fi)
+      proof
+        thus len GG = k by A13;
+        thus len GG > 0 by A10,A13;
+        1 <= 1 & 1 <= k by A11;
+        then 1 in Seg k by FINSEQ_1:1;
+        then GG.1 = Fam.1 by FUNCT_1:49;
+        hence GG.1 is elementary_row Matrix of R() by A6;
+        let i be Nat;
+        assume A14: 1 <= i;
+        assume A15: i < len GG;
+        let Fi be Matrix of (len A()), R();
+        assume A16: Fi = GG.i;
+        i < k by A13,A15;
+        then 1 <= i & i <= k by A14;
+        then i in Seg k by FINSEQ_1:1;
+        then A17: Fam.i = Fi by A16, FUNCT_1:49;
+        i < k by A13,A15;
+        then i < k + 1 by NAT_1:13;
+        then i < len Fam by A6;
+        then consider B being elementary_row Matrix of (len A()), R()
+        such that
+        A18: Fam.(i + 1) = B * Fi
+        by A6,A14,A17;
+        take B;
+        i < k by A13,A15;
+        then i+1 <= k by NAT_1:13;
+        then 1 <= i+1 & i+1 <= k by A14, NAT_1:13;
+        then i+1 in Seg k by FINSEQ_1:1;
+        then Fam.(i+1) = GG.(i+1) by FUNCT_1:49;
+        hence GG.(i + 1) = B * Fi by A18;
+      end;
+      then A19: for E9 being Matrix of len A(), R() st E9 = GG.(len GG)
+      holds P[E9 * A()] by A5;
+      A20: 1 <= k & k <= k + 1 by A11, NAT_1:13;
+      then A21: 1 <= k & k <= len Fam by A6;
+      then k in Seg (len Fam) by FINSEQ_1:1;
+      then k in dom Fam by FINSEQ_1:def 3;
+      then Fam.k in rng Fam by FUNCT_1:3;
+      then Fam.k in (len A())-Matrices_over R();
+      then reconsider Fk = Fam.k as Matrix of (len A()), R() by MATRIX_1:2;
+      k < len Fam & Fk = Fam.k by A12;
+      then consider B9 being elementary_row Matrix of len A(), R() such that
+      A22: Fam.(k + 1) = B9 * Fk
+      by A6,A21;
+      1 <= k + 1 & k + 1 <= k + 1 by A20, XXREAL_0:2;
+      then k + 1 in Seg (k + 1) by FINSEQ_1:1;
+      then k + 1 in Seg (len Fam) by A6;
+      then k + 1 in dom Fam by FINSEQ_1:def 3;
+      then Fam.(k + 1) in rng Fam by FUNCT_1:3;
+      then Fam.(k + 1) in (len A())-Matrices_over R();
+      then reconsider F9k = Fam.(k + 1) as Matrix of (len A()), R()
+      by MATRIX_1:2;
+      A23: k in Seg k by A10,FINSEQ_1:3;
+
+      Fk = GG.(len GG) by A13, A23, FUNCT_1:49;
+      then A24: P[Fk * A()] by A19;
+      width B9 = len A() & len Fk = len A() & width Fk = len A()
+      by MATRIX_0:24;
+      then A25: width B9 = len Fk & width Fk = len A();
+      A26: E = F9k by A6,A7;
+      then E = B9 * Fk by A22;
+      then A27: E * A() = B9 * (Fk * A()) by A25,MATRIX_3:33;
+      width Fk = len A() by MATRIX_0:24;
+      then len (Fk * A()) = len Fk by MATRIX_3:def 4;
+      then len (Fk * A()) = len A() by MATRIX_0:24;
+      then width B9 = len A() & len (Fk * A()) = len A() by MATRIX_0:24;
+      then width B9 = len (Fk * A());
+      then P[B9 * (Fk * A())] by A2,A24;
+      then P[F9k * A()] by A26, A27;
+      hence P[E * A()] by A26;
+    end;
+  end;
+  for k being Nat holds Q[k] from NAT_1:sch 2(A3,A4);
+  hence thesis;
+end;
+
+scheme
+IndRREF { R() -> Skew-Field, P[Matrix of R()],
+          A() -> Matrix of R() } :
+  ex Fam being FinSequence of (len A())-Matrices_over R()
+  st len Fam > 0 & Fam.1 is elementary_row Matrix of (len A()),R()
+   & (for i being Nat st 1 <= i & i < len Fam
+      for Fi being Matrix of (len A()), R() st Fi = Fam.i
+      ex B being elementary_row Matrix of (len A()), R()
+      st Fam.(i + 1) = B * Fi)
+   & (ex E being Matrix of (len A()), R()
+      st E = Fam.(len Fam)
+       & P[E * A()] & E * A() in_reduced_row_echelon_form)
+provided
+A1: P[A()] and
+A2: for A0 being Matrix of R() st P[A0]
+    for E being elementary_row Matrix of R()
+    st width E = len A0
+    holds P[E * A0]
+proof
+  consider Fam being FinSequence of (len A())-Matrices_over R() such that
+  A3: len Fam > 0 & Fam.1 is elementary_row Matrix of (len A()),R() and
+  A4: for i being Nat st 1 <= i & i < len Fam
+      for Fi being Matrix of (len A()),R() st Fi = Fam.i
+      ex B being elementary_row Matrix of (len A()),R()
+      st Fam.(i + 1) = B * Fi and
+  A5: ex B being Matrix of (len A()),R()
+      st B = Fam.(len Fam)
+       & (B * A()) in_reduced_row_echelon_form
+  by Th20;
+  take Fam;
+  thus len Fam > 0 by A3;
+  thus Fam.1 is elementary_row Matrix of (len A()),R() by A3;
+  thus for i being Nat st 1 <= i & i < len Fam
+       for Fi being Matrix of (len A()), R() st Fi = Fam.i
+       ex B being elementary_row Matrix of (len A()), R()
+       st Fam.(i + 1) = B * Fi by A4;
+  consider E being Matrix of (len A()), R() such that
+  A6: E = Fam.(len Fam) & (E * A()) in_reduced_row_echelon_form
+  by A5;
+  take E;
+  for Fam9 being FinSequence of (len A())-Matrices_over R()
+  st len Fam9 > 0 & Fam9.1 is elementary_row Matrix of len A(),R()
+   & (for i being Nat st 1 <= i & i < len Fam9
+      for Fi being Matrix of (len A()), R() st Fi = Fam9.i
+      ex B being elementary_row Matrix of (len A()), R()
+      st Fam9.(i + 1) = B * Fi)
+  for E9 being Matrix of (len A()), R() st E9 = Fam9.(len Fam9)
+  holds P[E9 * A()] from IndStep(A1,A2);
+  then P[E * A()] by A3,A4,A6;
+  hence thesis by A6;
+end;
 
 :: First two theorems prove elementary row matrices produce matroid
 :: isomorphisms for vector matroids
@@ -725,10 +911,7 @@ theorem Th21:
   for M being elementary_row Matrix of F
   st width M = len A
   holds vector_matroid A, vector_matroid (M * A) are_isomorphic;
-::>                                                           *4
 
-:: Successively applying (finitely many) elementary row matrices to a
-:: matrix will produce isomorphic vector matroids
 theorem Th22:
   for A being Matrix of m,n,F
   for Fam being FinSequence of m-Matrices_over F
@@ -741,147 +924,94 @@ theorem Th22:
   holds vector_matroid A, vector_matroid (E * A) are_isomorphic
 proof
   let A be Matrix of m,n,F;
-  defpred P[Nat] means
-  for Fam being FinSequence of m-Matrices_over F
-  st len Fam > 0 & len Fam = $1 & Fam.1 is elementary_row Matrix of m,F
-  & (for i being Nat st 1 <= i & i < len Fam
-     for Fi being Matrix of m,F st Fi = Fam.i
-     ex B being elementary_row Matrix of m,F
-     st Fam.(i + 1) = B * Fi)
-  for E being Matrix of m,F st E = Fam.(len Fam)
-  holds vector_matroid A, vector_matroid (E * A) are_isomorphic;
-  A1: P[0];
-  A2: for k being Nat st P[k] holds P[k + 1]
-  proof
-    let k be Nat;
-    assume A3: P[k];
-    for Fam being FinSequence of m-Matrices_over F
-    st len Fam > 0 & len Fam = k+1 & Fam.1 is elementary_row Matrix of m,F
-    & (for i being Nat st 1 <= i & i < len Fam
-       for Fi being Matrix of m,F st Fi = Fam.i
-       ex B being elementary_row Matrix of m,F
-       st Fam.(i + 1) = B * Fi)
-    for E being Matrix of m,F st E = Fam.(len Fam)
-    holds vector_matroid A, vector_matroid (E * A) are_isomorphic
-    proof
-      let Fam be FinSequence of m-Matrices_over F;
-      assume len Fam > 0;
-      assume A4: len Fam = k+1;
-      assume A5: Fam.1 is elementary_row Matrix of m,F;
-      assume A6: for i being Nat st 1 <= i & i < len Fam
-                 for Fi being Matrix of m,F st Fi = Fam.i
-                 ex B being elementary_row Matrix of m,F
-                 st Fam.(i + 1) = B * Fi;
-      let E be Matrix of m,F;
-      assume A7: E = Fam.(len Fam);
-      width E = m & len A = m by MATRIX_0:24,def 2;
-      then A8: width E = len A;
-      per cases by NAT_1:3;
-      suppose k = 0;
-        then E = Fam.1 by A4,A7;
-        then E is elementary_row by A5;
-        then reconsider EE=E as elementary_row Matrix of m,F;
-        vector_matroid A, vector_matroid (EE * A) are_isomorphic by A8, Th21;
-        hence thesis;
-      end;
-      suppose A9: k > 0;
-        then 0 < 0 + k;
-        then A10: 1 <= k by NAT_1:19;
-        reconsider GG = Fam|(Seg k) as FinSequence of m-Matrices_over F
-        by FINSEQ_1:18;
-        k + 1 = len Fam by A4;
-        then A11: k < len Fam by NAT_1:13;
-        A12: k in Seg k by A9,FINSEQ_1:3;
-        A13: len GG = k
-        proof
-          k <= len Fam by A11;
-          then Seg k c= Seg (len Fam) by FINSEQ_1:5;
-          then Seg k c= dom Fam by FINSEQ_1:def 3;
-          then k in NAT & Seg k = dom (Fam | (Seg k))
-          by ORDINAL1:def 12, RELAT_1:62;
-          then len GG = k by FINSEQ_1:def 3;
-          hence thesis;
-        end;
-        len GG > 0 & len GG = k & GG.1 is elementary_row Matrix of m,F
-        & (for i being Nat st 1 <= i & i < len GG
-        for Fi being Matrix of m,F st Fi = GG.i
-        ex B being elementary_row Matrix of m,F
-        st GG.(i + 1) = B * Fi)
-        proof
-          thus len GG > 0 by A9,A13;
-          thus len GG = k by A13;
-          1 in Seg k by A10,FINSEQ_1:1;
-          then GG.1 = Fam.1 by FUNCT_1:49;
-          hence GG.1 is elementary_row Matrix of m,F by A5;
-          let i be Nat;
-          assume A14: 1 <= i;
-          assume A15: i < len GG;
-          let Fi be Matrix of m,F;
-          assume A16: Fi = GG.i;
-          A17: 1 <= i+1 & i+1 <= len GG by A14,A15,NAT_1:13;
-          then i+1 in Seg k by A13,FINSEQ_1:1;
-          then A18: GG.(i+1) = Fam.(i+1) by FUNCT_1:49;
-          i < len GG & len GG < len Fam by A13,A4,A17,NAT_1:13;
-          then A19: i < len Fam by XXREAL_0:2;
-          1 <= i & i <= len GG by A14,A15;
-          then i in Seg k by A13,FINSEQ_1:1;
-          then GG.i = Fam.i by FUNCT_1:49;
-          then 1 <= i & i < len Fam & Fi = Fam.i by A14,A16,A19;
-          hence thesis by A6,A18;
-        end;
+  deffunc F1() = F;
+  deffunc A1() = A;
+  defpred P[Matrix of F1()] means
+  vector_matroid A, vector_matroid $1 are_isomorphic;
 
-        then A20: for E being Matrix of m,F st E = GG.(len GG)
-        holds vector_matroid A, vector_matroid (E * A) are_isomorphic
-        by A3;
-        k in Seg k by A9, FINSEQ_1:3;
-        then len GG in dom GG by A13, FINSEQ_1:def 3;
-        then GG.(len GG) is Element of m-Matrices_over F by FINSEQ_2:11;
-        then reconsider EE = GG.(len GG) as Matrix of m,F by MATRIX_1:2;
-        GG.(len GG) = GG.k by A13
-                   .= Fam.k by A12,FUNCT_1:49;
-        then A21: EE = Fam.k;
-        width EE = m & len A = m by MATRIX_0:24,def 2;
-        then A22: width EE = len A;
-        then A23: vector_matroid A, vector_matroid (EE * A) are_isomorphic
-        by A20;
-        k < len Fam & EE = Fam.k by A11,A21;
-        then consider B being elementary_row Matrix of m,F such that
-        A24: Fam.(k + 1) = B * EE
-        by A6, A10;
-        k + 1 = len Fam by A4;
-        then A25: E = B * EE by A7, A24;
-        len (EE * A) = len EE by A22, MATRIX_3:def 4
-                    .= m by MATRIX_0:24
-                    .= width B by MATRIX_0:24;
-        then A26: width B = len (EE * A);
-        width B = m & len EE = m & width EE = m by MATRIX_0:24;
-        then width B = len EE & width EE = len A by A22;
-        then B * (EE * A) = (B * EE) * A by MATRIX_3:33
-                         .= E * A by A25;
-        then vector_matroid (EE * A), vector_matroid (E * A)
-        are_isomorphic by A26, Th21;
-        hence vector_matroid A, vector_matroid (E * A)
-        are_isomorphic by A23, Th2;
-      end;
-    end;
-    hence thesis;
+  A1: P[A1()];
+  A2: for A0 being Matrix of F1() st P[A0]
+  for M being elementary_row Matrix of F1()
+  st width M = len A0
+  holds P[M * A0]
+  proof
+    let A0 be Matrix of F1();
+    assume A3: P[A0];
+    let M be elementary_row Matrix of F1();
+    assume width M = len A0;
+    then vector_matroid A0, vector_matroid (M * A0) are_isomorphic by Th21;
+    then vector_matroid (M * A0), vector_matroid A0 are_isomorphic;
+    hence P[M * A0] by A3,Th2;
   end;
-  for k being Nat holds P[k] from NAT_1:sch 2(A1, A2);
-  hence thesis;
+
+  A4: len A1() = m by MATRIX_0:25;
+  for Fam being FinSequence of (len A1())-Matrices_over F1()
+  st len Fam > 0 & Fam.1 is elementary_row Matrix of len A1(),F1()
+   & (for i being Nat st 1 <= i & i < len Fam
+      for Fi being Matrix of (len A1()), F1() st Fi = Fam.i
+      ex B being elementary_row Matrix of (len A1()), F1()
+      st Fam.(i + 1) = B * Fi)
+  for E being Matrix of (len A1()), F st E = Fam.(len Fam)
+  holds P[E * A1()] from IndStep(A1, A2);
+  hence thesis by A4;
 end;
 
-:: Next two theorems: these are more than isomorphisms, they are
-:: identically equal vector matroids.
 theorem Th23:
+  for A being Matrix of m,n,F
+  ex Fam being FinSequence of m-Matrices_over F
+  st len Fam > 0 & Fam.1 is elementary_row Matrix of m,F
+   & (for i being Nat st 1 <= i & i < len Fam
+      for Fi being Matrix of m, F st Fi = Fam.i
+      ex B being elementary_row Matrix of m, F
+      st Fam.(i + 1) = B * Fi)
+   & (ex E being Matrix of m, F
+      st E = Fam.(len Fam)
+       & vector_matroid A, vector_matroid(E * A) are_isomorphic
+       & E * A in_reduced_row_echelon_form)
+proof
+  let A be Matrix of m,n,F;
+  deffunc F1() = F;
+  deffunc A1() = A;
+  defpred P[Matrix of F1()] means
+  vector_matroid A, vector_matroid $1 are_isomorphic;
+
+  A1: P[A1()];
+  A2: for A0 being Matrix of F1() st P[A0]
+  for M being elementary_row Matrix of F1()
+  st width M = len A0
+  holds P[M * A0]
+  proof
+    let A0 be Matrix of F1();
+    assume A3: P[A0];
+    let M be elementary_row Matrix of F1();
+    assume width M = len A0;
+    then vector_matroid A0, vector_matroid (M * A0) are_isomorphic by Th21;
+    then vector_matroid (M * A0), vector_matroid A0 are_isomorphic;
+    hence P[M * A0] by A3,Th2;
+  end;
+
+  A4: len A1() = m by MATRIX_0:25;
+
+  ex Fam being FinSequence of (len A1())-Matrices_over F1()
+  st len Fam > 0 & Fam.1 is elementary_row Matrix of (len A1()),F1()
+   & (for i being Nat st 1 <= i & i < len Fam
+      for Fi being Matrix of (len A1()), F1() st Fi = Fam.i
+      ex B being elementary_row Matrix of (len A1()), F1()
+      st Fam.(i + 1) = B * Fi)
+   & (ex E being Matrix of (len A1()), F1()
+      st E = Fam.(len Fam)
+       & P[E * A1()] & E * A1() in_reduced_row_echelon_form)
+  from IndRREF(A1,A2);
+  hence thesis by A4;
+end;
+
+theorem Th24:
   for A being Matrix of F
   for M being elementary_row Matrix of F
   st width M = len A
   holds vector_matroid A = vector_matroid (M * A);
-::>                                             *4,4
 
-:: Successively applying (finitely many) elementary row matrices to a
-:: matrix will produce isomorphic vector matroids
-theorem Th24:
+theorem Th25:
   for A being Matrix of m,n,F
   for Fam being FinSequence of m-Matrices_over F
   st len Fam > 0 & Fam.1 is elementary_row Matrix of m,F
@@ -893,131 +1023,83 @@ theorem Th24:
   holds vector_matroid A = vector_matroid (E * A)
 proof
   let A be Matrix of m,n,F;
-  defpred P[Nat] means
-  for Fam being FinSequence of m-Matrices_over F
-  st len Fam > 0 & len Fam = $1 & Fam.1 is elementary_row Matrix of m,F
-  & (for i being Nat st 1 <= i & i < len Fam
-     for Fi being Matrix of m,F st Fi = Fam.i
-     ex B being elementary_row Matrix of m,F
-     st Fam.(i + 1) = B * Fi)
-  for E being Matrix of m,F st E = Fam.(len Fam)
-  holds vector_matroid A = vector_matroid (E * A);
-  A1: P[0];
-  A2: for k being Nat st P[k] holds P[k + 1]
-  proof
-    let k be Nat;
-    assume A3: P[k];
-    for Fam being FinSequence of m-Matrices_over F
-    st len Fam > 0 & len Fam = k+1 & Fam.1 is elementary_row Matrix of m,F
-    & (for i being Nat st 1 <= i & i < len Fam
-       for Fi being Matrix of m,F st Fi = Fam.i
-       ex B being elementary_row Matrix of m,F
-       st Fam.(i + 1) = B * Fi)
-    for E being Matrix of m,F st E = Fam.(len Fam)
-    holds vector_matroid A = vector_matroid (E * A)
-    proof
-      let Fam be FinSequence of m-Matrices_over F;
-      assume len Fam > 0;
-      assume A4: len Fam = k+1;
-      assume A5: Fam.1 is elementary_row Matrix of m,F;
-      assume A6: for i being Nat st 1 <= i & i < len Fam
-                 for Fi being Matrix of m,F st Fi = Fam.i
-                 ex B being elementary_row Matrix of m,F
-                 st Fam.(i + 1) = B * Fi;
-      let E be Matrix of m,F;
-      assume A7: E = Fam.(len Fam);
-      width E = m & len A = m by MATRIX_0:24,def 2;
-      then A8: width E = len A;
-      per cases by NAT_1:3;
-      suppose k = 0;
-        then E = Fam.1 by A4,A7;
-        then E is elementary_row by A5;
-        then reconsider EE=E as elementary_row Matrix of m,F;
-        vector_matroid A = vector_matroid (EE * A) by A8, Th23;
-        hence thesis;
-      end;
-      suppose A9: k > 0;
-        then 0 < 0 + k;
-        then A10: 1 <= k by NAT_1:19;
-        reconsider GG = Fam|(Seg k) as FinSequence of m-Matrices_over F
-        by FINSEQ_1:18;
-        k + 1 = len Fam by A4;
-        then A11: k < len Fam by NAT_1:13;
-        A12: k in Seg k by A9,FINSEQ_1:3;
-        A13: len GG = k
-        proof
-          k <= len Fam by A11;
-          then Seg k c= Seg (len Fam) by FINSEQ_1:5;
-          then Seg k c= dom Fam by FINSEQ_1:def 3;
-          then k in NAT & Seg k = dom (Fam | (Seg k))
-          by ORDINAL1:def 12, RELAT_1:62;
-          then len GG = k by FINSEQ_1:def 3;
-          hence thesis;
-        end;
-        len GG > 0 & len GG = k & GG.1 is elementary_row Matrix of m,F
-        & (for i being Nat st 1 <= i & i < len GG
-        for Fi being Matrix of m,F st Fi = GG.i
-        ex B being elementary_row Matrix of m,F
-        st GG.(i + 1) = B * Fi)
-        proof
-          thus len GG > 0 by A9,A13;
-          thus len GG = k by A13;
-          1 in Seg k by A10,FINSEQ_1:1;
-          then GG.1 = Fam.1 by FUNCT_1:49;
-          hence GG.1 is elementary_row Matrix of m,F by A5;
-          let i be Nat;
-          assume A14: 1 <= i;
-          assume A15: i < len GG;
-          let Fi be Matrix of m,F;
-          assume A16: Fi = GG.i;
-          A17: 1 <= i+1 & i+1 <= len GG by A14,A15,NAT_1:13;
-          then i+1 in Seg k by A13,FINSEQ_1:1;
-          then A18: GG.(i+1) = Fam.(i+1) by FUNCT_1:49;
-          i < len GG & len GG < len Fam by A13,A4,A17,NAT_1:13;
-          then A19: i < len Fam by XXREAL_0:2;
-          1 <= i & i <= len GG by A14,A15;
-          then i in Seg k by A13,FINSEQ_1:1;
-          then GG.i = Fam.i by FUNCT_1:49;
-          then 1 <= i & i < len Fam & Fi = Fam.i by A14,A16,A19;
-          hence thesis by A6,A18;
-        end;
+  deffunc F1() = F;
+  deffunc A1() = A;
+  defpred P[Matrix of F1()] means
+  vector_matroid A = vector_matroid $1;
 
-        then A20: for E being Matrix of m,F st E = GG.(len GG)
-        holds vector_matroid A = vector_matroid (E * A) by A3;
-        k in Seg k by A9, FINSEQ_1:3;
-        then len GG in dom GG by A13, FINSEQ_1:def 3;
-        then GG.(len GG) is Element of m-Matrices_over F by FINSEQ_2:11;
-        then GG.(len GG) in m-Matrices_over F;
-        then reconsider EE = GG.(len GG) as Matrix of m,F
-        by MATRIX_1:2;
-        GG.(len GG) = GG.k by A13
-                   .= Fam.k by A12,FUNCT_1:49;
-        then A21: EE = Fam.k;
-        width EE = m & len A = m by MATRIX_0:24,def 2;
-        then A22: width EE = len A;
-        then A23: vector_matroid A = vector_matroid (EE * A) by A20;
-        k < len Fam & EE = Fam.k by A11,A21;
-        then consider B being elementary_row Matrix of m,F such that
-        A24: Fam.(k + 1) = B * EE
-        by A6, A10;
-        k + 1 = len Fam by A4;
-        then A25: E = B * EE by A7, A24;
-        len (EE * A) = len EE by A22, MATRIX_3:def 4
-                    .= m by MATRIX_0:24
-                    .= width B by MATRIX_0:24;
-        then A26: width B = len (EE * A);
-        width B = m & len EE = m & width EE = m by MATRIX_0:24;
-        then width B = len EE & width EE = len A by A22;
-        then B * (EE * A) = (B * EE) * A by MATRIX_3:33
-                         .= E * A by A25;
-        then vector_matroid (EE * A) = vector_matroid (E * A) by A26, Th23;
-        hence vector_matroid A = vector_matroid (E * A) by A23;
-      end;
-    end;
-    hence thesis;
+  A1: P[A1()];
+  A2: for A0 being Matrix of F1() st P[A0]
+  for M being elementary_row Matrix of F1()
+  st width M = len A0
+  holds P[M * A0]
+  proof
+    let A0 be Matrix of F1();
+    assume A3: P[A0];
+    let M be elementary_row Matrix of F1();
+    assume width M = len A0;
+    then vector_matroid A0 = vector_matroid (M * A0) by Th24;
+    hence P[M * A0] by A3;
   end;
-  for k being Nat holds P[k] from NAT_1:sch 2(A1, A2);
-  hence thesis;
+
+  A4: len A1() = m by MATRIX_0:25;
+  for Fam being FinSequence of (len A1())-Matrices_over F1()
+  st len Fam > 0 & Fam.1 is elementary_row Matrix of len A1(),F1()
+   & (for i being Nat st 1 <= i & i < len Fam
+      for Fi being Matrix of (len A1()), F1() st Fi = Fam.i
+      ex B being elementary_row Matrix of (len A1()), F1()
+      st Fam.(i + 1) = B * Fi)
+  for E being Matrix of (len A1()), F st E = Fam.(len Fam)
+  holds P[E * A1()] from IndStep(A1, A2);
+  hence thesis by A4;
+end;
+
+theorem Th26:
+  for A being Matrix of m,n,F
+  ex Fam being FinSequence of m-Matrices_over F
+  st len Fam > 0 & Fam.1 is elementary_row Matrix of m,F
+   & (for i being Nat st 1 <= i & i < len Fam
+      for Fi being Matrix of m, F st Fi = Fam.i
+      ex B being elementary_row Matrix of m, F
+      st Fam.(i + 1) = B * Fi)
+   & (ex E being Matrix of m, F
+      st E = Fam.(len Fam)
+       & vector_matroid A = vector_matroid(E * A)
+       & E * A in_reduced_row_echelon_form)
+proof
+  let A be Matrix of m,n,F;
+  deffunc F1() = F;
+  deffunc A1() = A;
+  defpred P[Matrix of F1()] means
+  vector_matroid A = vector_matroid $1;
+
+  A1: P[A1()];
+  A2: for A0 being Matrix of F1() st P[A0]
+  for M being elementary_row Matrix of F1()
+  st width M = len A0
+  holds P[M * A0]
+  proof
+    let A0 be Matrix of F1();
+    assume A3: P[A0];
+    let M be elementary_row Matrix of F1();
+    assume width M = len A0;
+    then vector_matroid A0 = vector_matroid (M * A0) by Th24;
+    hence P[M * A0] by A3;
+  end;
+
+  A4: len A1() = m by MATRIX_0:25;
+
+  ex Fam being FinSequence of (len A1())-Matrices_over F1()
+  st len Fam > 0 & Fam.1 is elementary_row Matrix of (len A1()),F1()
+   & (for i being Nat st 1 <= i & i < len Fam
+      for Fi being Matrix of (len A1()), F1() st Fi = Fam.i
+      ex B being elementary_row Matrix of (len A1()), F1()
+      st Fam.(i + 1) = B * Fi)
+   & (ex E being Matrix of (len A1()), F1()
+      st E = Fam.(len Fam)
+       & P[E * A1()] & E * A1() in_reduced_row_echelon_form)
+  from IndRREF(A1,A2);
+  hence thesis by A4;
 end;
 
 :: Then we can produce a RREF matrix which produces an identical
@@ -1029,7 +1111,6 @@ theorem
   ex B being Representation of M
   st vector_matroid A = vector_matroid B
   & B in_reduced_row_echelon_form;
-::>                             *4
 
 begin :: Oxley's theorem
 
@@ -1039,7 +1120,6 @@ theorem
   st len A = len B :: number of rows in A = number of rows in B
   for i being Nat
   holds Line(A ^^ B, i) = Line(A, i) ^ Line(B, i);
-::>                                             *4,4,4,4
 
 theorem
   for A being Representation of M
@@ -1048,17 +1128,15 @@ theorem
    & (for i,j being Nat st [i,j] in Indices 1.(R,len A)
       holds 1.(R, len A) * (i,j) = A * (i,j))
   holds A is full;
-::>             *4,4,4
 
-theorem Th28:
+theorem Th30:
   ex A being Representation of M
   st A is full;
-::>          *4
 
 registration
   let R,M;
   cluster full for Representation of M;
-  existence by Th28;
+  existence by Th30;
 end;
 
 definition
@@ -1070,13 +1148,12 @@ definition
 end;
 
 :: lemma StandardRepr_toMatroid_isBase_X:
-theorem Th29:
+theorem Th31:
   for S being Representation of M st S is standard
   holds Seg (len S) is Basis of vector_matroid S;
-::>                                            *4
 
 :: lemma Matrix.exists_standardRepr_isBase
-theorem Th30:
+theorem Th32:
   for R being Skew-Field
   for A being Matrix of R
   for G being Basis of vector_matroid A
@@ -1084,9 +1161,8 @@ theorem Th30:
   st S is standard
    & len S = card G
    & vector_matroid S = vector_matroid A;
-::>                                    *4
 
-theorem Th31:
+theorem Th33:
   for R being Skew-Field
   for M being R-representable Matroid
   ex S being Representation of M
@@ -1103,8 +1179,8 @@ proof
   A2: S is standard and
   A3: len S = card G
    & vector_matroid S = vector_matroid A
-  by Th30;
-  A4: S represents M by A3,Def6,Def5;
+  by Th32;
+  S represents M by A3,Def6,Def5;
   then reconsider S1 = S as Representation of M by Def6;
   take S1;
   1.(R,len S) ^^ S represents vector_matroid A by A2;
@@ -1118,7 +1194,7 @@ registration
   let R be Skew-Field;
   let M be R-representable Matroid;
   cluster standard for Representation of M;
-  existence by Th31;
+  existence by Th33;
 end;
 
 begin :: Totally unimodular matrices
@@ -1138,7 +1214,7 @@ registration
   proof
     reconsider b1 = {1} as Subset of NAT;
     take b1;
-    b1 is without_zero by FINSEQ_1:2; 
+    b1 is without_zero by FINSEQ_1:2;
     hence thesis;
   end;
 end;
@@ -1170,7 +1246,6 @@ registration
   let n be Nat;
   cluster 1.(R,n) -> totally-unimodular;
   correctness;
-::>         *4
 end;
 
 definition
@@ -1182,35 +1257,30 @@ definition
   & (width A = len IT implies A*IT is totally-unimodular);
 end;
 
-theorem Th32:
+theorem Th34:
   for m,n being Nat
   for l,k being Nat
   holds InterchangeLine(1.(R,m), l, k) is TU-preserving;
-::>                                                   *4,4
 
-theorem Th33:
+theorem Th35:
   for m,l being Nat
   for a being Element of R st a <> 0.R
   holds ScalarXLine(1.(R,m), l, a) is TU-preserving;
-::>                                               *4,4,4,4
 
-theorem Th34:
+theorem Th36:
   for m,l,k being Nat
   for a being Element of R st a <> 0.R
   holds RlineXScalar(1.(R,m), l, k, a) is TU-preserving;
-::>                                                   *4,4,4,4
 
 
-theorem Th35:
+theorem Th37:
   for m,l,k being Nat st l in 1.(R,m) & k in 1.(R,m)
   holds InterchangeCol(1.(R,m), l, k) is TU-preserving;
-::>                                                  *4,4
 
 registration
   let R;
   cluster elementary_row -> TU-preserving for Matrix of R;
-  correctness by Th32,Th33,Th34,Th35;
-::>            *4,4,4,4
+  correctness by Th34,Th35,Th36,Th37;
 end;
 
 theorem
@@ -1223,11 +1293,10 @@ theorem
    & S is standard
    & vector_matroid S = vector_matroid A
    & S is totally-unimodular;
-::>                        *4
 
 :: lemma Matrix.exists_standardRepr_isBase_isTotallyUnimodular
 theorem
-  for m,n being Nat
+  :: for m,n being Nat
   for R being Field
   for A being Matrix of m,n,R st A is totally-unimodular
   for G being Basis of vector_matroid A
@@ -1236,20 +1305,5 @@ theorem
    & S is standard
    & vector_matroid S = vector_matroid A
    & S is totally-unimodular;
-::>                        *4
   
 
-:: Matrix.exists_standardRepr_isBase
-:: theorem
-::   for m,n being Nat
-::   for A being Matrix of m,n,R st A is totally-unimodular
-::   for G being Basis of vector_matroid A
-::   ex S being StandardMatroidRep of R
-::   st len S = card G
-::   & S is totally-unimodular
-::   :: shouldn't this be an isomorphism and not an equality?
-::   & vector_matroid S = vector_matroid A;
-
-
-
-::> 4: This inference is not accepted
