@@ -5,7 +5,7 @@ environ
       FINSEQ_1, FINSEQ_2, FINSET_1, CARD_1, ARYTM_3, XBOOLE_0, STRUCT_0,
       ALGSTR_0, ZFMISC_1, NAT_1, INCSP_1, XXREAL_0, TAXONOM2,
       AOFA_000, ORDERS_1, FUNCT_1, RELAT_1, NATTRA_1, EQREL_1,
-      VECTSP_1, VECTSP_2, RLVECT_3, CARD_3, RLVECT_2, SUPINF_2,
+      VECTSP_1, VECTSP_2, RLVECT_1, RLVECT_3, CARD_3, RLVECT_2, SUPINF_2,
       REALSET1, BINOP_1, FREEALG, ARYTM_1, RLVECT_5, JORDAN13,
       FUNCT_2, VECTSP13, CAT_1, GOBOARD5, WELLORD1, PRELAMB, MESFUNC1,
       MATRIX_0, MATRIX_1, MATRIX_3, MATRIX12, MATRIX13, MATROID0,
@@ -25,10 +25,11 @@ environ
       MATRIX_3, MATRIX12, MATRIX13, MATRLIN, MATRIX15, VECTSP13,
       REALSET1, RELSET_1, MATROID0;
 
- registrations FUNCT_1, FINSET_1, CARD_1, RELSET_1, PARTFUN1, FUNCT_2,
-      STRUCT_0, SUBSET_1, PENCIL_1, TDLAT_3, SETFAM_1, EQREL_1,
-      MATRIX_1, MATRLIN, XREAL_0, ALGSTR_0, BINOM, RLVECT_1, VECTSP_1, VECTSP_7,
-      VECTSP13, ORDINAL1, MATROID0, MATRIX13;
+ registrations FINSEQ_1, FINSEQ_2, FUNCT_1, FINSET_1, CARD_1, RELSET_1,
+      PARTFUN1, FUNCT_2, STRUCT_0, SUBSET_1, PENCIL_1, TDLAT_3,
+      SETFAM_1, EQREL_1, MATRIX_1, MATRLIN, XREAL_0, ALGSTR_0, BINOM,
+      RLVECT_1, VECTSP_1, VECTSP_7, VECTSP13, ORDINAL1, MATROID0,
+      MATRIX13;
 
  requirements BOOLE, SUBSET, NUMERALS, ARITHM, REAL;
 
@@ -41,13 +42,14 @@ environ
       MATROID0;
 
  theorems TARSKI, XBOOLE_1, ZFMISC_1, CARD_1, COH_SP, PRE_TOPC, NAT_1,
-      CLASSES1, TDLAT_3, XXREAL_0, XREAL_1, XBOOLE_0, FINSEQ_1, FINSEQ_2,
-      SETFAM_1, TAXONOM2, ORDERS_1, PARTFUN1, FUNCT_2, FUNCT_1, RELAT_1,
-      EQREL_1, WELLORD2, VECTSP_7, VECTSP_9, MATRIX_0, MATRIX_1, MATRIX_3, MATRLIN,
-      MATRIX12, CARD_2, VECTSP_4, ORDINAL1, CARD_FIL, RANKNULL, VECTSP_1,
-      VECTSP_6, ALGSTR_0, HALLMAR1, MATROID0;
+      CLASSES1, SUBSET_1, TDLAT_3, XXREAL_0, XREAL_1, XBOOLE_0, FINSEQ_1,
+      FINSEQ_2, SETFAM_1, TAXONOM2, ORDERS_1, PARTFUN1, FUNCT_2,
+      FUNCT_1, RELAT_1, EQREL_1, WELLORD2, VECTSP_7, VECTSP_9,
+      MATRIX_0, MATRIX_1, MATRIX_3, MATRLIN, MATRIX12, CARD_2,
+      VECTSP_4, ORDINAL1, CARD_FIL, RANKNULL, VECTSP_1, VECTSP_6,
+      VECTSP13, ALGSTR_0, HALLMAR1, MATROID0;
 
- schemes FUNCT_2, NAT_1;
+ schemes FUNCT_2, NAT_1, SUBSET_1;
 
 begin :: Isomorphic matroids
 
@@ -111,7 +113,47 @@ end;
 theorem Th3:
   for M1,M2 being Matroid
   st M1,M2 are_isomorphic
-  holds M2,M1 are_isomorphic;
+  holds M2,M1 are_isomorphic
+proof
+  let M1,M2 be Matroid;
+  assume M1,M2 are_isomorphic;
+  then consider psi being Function of M1,M2 such that
+  A1: psi is one-to-one & psi is onto
+   & for X being Subset of M1
+     for Y being Subset of M2 st Y = psi .: X
+     holds X is independent iff Y is independent;
+  ex phi being Function of M2,M1
+  st phi is one-to-one & phi is onto
+  & for Y being Subset of M2
+    for X being Subset of M1 st X = phi .: Y
+    holds Y is independent iff X is independent
+  proof
+    A2: rng psi = the carrier of M2 by A1,FUNCT_2:def 3;
+    then reconsider phi = psi" as Function of M2,M1 by A1,FUNCT_2:25;
+    take phi;
+    A3: psi * phi = id (the carrier of M2) by A1,A2,FUNCT_2:29;
+    then phi is one-to-one & psi is onto by FUNCT_2:23;
+    hence phi is one-to-one;
+    A4: phi * psi = id (the carrier of M1) by A1,A2,FUNCT_2:29;
+    then psi is one-to-one & phi is onto by FUNCT_2:23;
+    hence phi is onto;
+    let Y be Subset of M2;
+    let X be Subset of M1;
+    assume A5: X = phi .: Y;
+    A6: psi .: X = psi .: (phi .: Y) by A5
+                .= (psi * phi) .: Y by RELAT_1:126
+                .= (id the carrier of M2) .: Y by A3
+                .= Y by FUNCT_1:92;
+    hereby 
+      assume Y is independent;
+      hence X is independent by A1,A6;
+    end;
+    assume X is independent;
+    hence Y is independent by A1,A6;
+  end;
+  hence thesis;
+end;
+
 
 definition
   let M1, M2 be Matroid;
@@ -132,14 +174,54 @@ reserve A for Matrix of R;
 definition
   let R, A;
   func columns A -> Subset of R ^* (len A) equals
-  {Col(A,i) where i is Nat : i in Seg (len A)};
+  {Col(A,i) where i is Nat : i in Seg (width A)};
+  coherence
+  proof
+    set IT = {Col(A,i) where i is Nat : i in Seg (width A)};
+    for x being object
+    st x in IT
+    holds x in the carrier of R ^* (len A)
+    proof
+      let x be object;
+      assume A1: x in IT;
+      then consider i being Nat such that
+      A2: x = Col(A,i) & i in Seg (width A);
+      x in (len A)-tuples_on the carrier of R by A2;
+      hence x in the carrier of R ^* (len A) by VECTSP13:def 7;
+    end;
+    then IT c= the carrier of R ^* (len A);
+    then IT in bool the carrier of (R ^* (len A));
+    then IT is Element of bool the carrier of (R ^* (len A));
+    then IT is Subset of the carrier of R ^* (len A);
+    hence thesis;
+  end;
+end;
+
+registration
+  let R, A;
+  cluster columns A -> finite;
   coherence;
+::>       *4
 end;
 
 theorem Th5:
   for c being object
-  holds c in columns A iff ex i being Nat st c = Col(A, i) & i in
-  Seg(len A);
+  holds c in columns A
+  iff ex i being Nat st c = Col(A, i) & i in Seg(width A)
+proof
+  let c be object;
+  hereby 
+    assume c in columns A;
+    then consider i being Nat such that
+    A1: c = Col(A,i) & i in Seg (width A);
+    take i;
+    thus c = Col(A, i) by A1;
+    thus i in Seg(width A) by A1;
+  end;
+  given i being Nat such that 
+  A2: c = Col(A, i) & i in Seg(width A);
+  thus c in columns A by A2;
+end;
 
 theorem
   for m,n being Nat
@@ -148,19 +230,66 @@ theorem
   by MATRIX_0:def 2;
 
 definition
+  let R;
+  let I be set;
+  let A;
+  func I -indexed_columns_of A -> Subset of R ^* (len A) equals :DefFoo:
+  {Col(A,i) where i is Nat : i in I};
+  coherence
+  proof
+    set IT = {Col(A,i) where i is Nat : i in I};
+    for x being object
+    st x in IT
+    holds x in the carrier of R ^* (len A)
+    proof
+      let x be object;
+      assume A1: x in IT;
+      then consider i being Nat such that
+      A2: x = Col(A,i) & i in I;
+      x in (len A)-tuples_on the carrier of R by A2;
+      hence x in the carrier of R ^* (len A) by VECTSP13:def 7;
+    end;
+    then IT c= the carrier of R ^* (len A);
+    then IT in bool the carrier of (R ^* (len A));
+    then IT is Element of bool the carrier of (R ^* (len A));
+    then IT is Subset of the carrier of R ^* (len A);
+    hence thesis;
+  end;
+end;
+
+theorem Th22:
+  for I being set
+  for C being object
+  holds C in I-indexed_columns_of A
+    iff ex i being Nat st i in I & C = Col(A,i)
+proof
+  let I be set;
+  let C be object;
+  thus C in I-indexed_columns_of A implies
+  ex i being Nat st i in I & C = Col(A,i)
+  proof
+    assume C in I-indexed_columns_of A;
+    then consider i being Nat such that
+    A1: C = Col(A,i) & i in I by DefFoo;
+    take i;
+    thus i in I by A1;
+    thus C = Col(A,i) by A1;
+  end;
+  thus (ex i being Nat st i in I & C = Col(A,i))
+  implies C in I-indexed_columns_of A;
+end;
+
+:: Compare this to LinearlyIndependentSubsets V (MATROID0:def 9)
+definition
   let R, A;
   func vector_matroid A -> strict SubsetFamilyStr means :Def3:
-  the carrier of it = Seg (width A)
-  & for C being Subset of R ^* (len A) st C c= columns A
-    for I being Subset of Seg (width A)
-    st (for i being Nat holds i in I iff Col(A, i) in C)
-    holds I in the_family_of it iff C is linearly-independent;
+  the carrier of it = Seg (width A) &
+  the_family_of it = {I where I is Subset of Seg(width A) :
+                      I-indexed_columns_of A is linearly-independent };
   existence
   proof
-    set Fam = {I where I is Subset of Seg (width A) :
-    ex C being Subset of R ^* (len A)
-    st C c= columns A & (for i being Nat holds i in I iff Col(A, i) in C)
-    & C is linearly-independent};
+    defpred P[set] means $1-indexed_columns_of A is linearly-independent;
+    set Fam = { I where I is Subset of Seg (width A) : P[I] };
 
     Fam is Element of bool (bool (Seg (width A)))
     proof
@@ -168,10 +297,7 @@ definition
       proof
         let F be object;
         assume F in Fam;
-        then ex I being Subset of Seg (width A) st F = I &
-        ex C being Subset of R ^* (len A)
-        st C c= columns A & (for i being Nat holds i in I iff Col(A, i) in C)
-        & C is linearly-independent;
+        then ex I being Subset of Seg (width A) st I = F & P[I];
         hence F in bool (Seg (width A));
       end;
       then Fam c= bool (Seg (width A));
@@ -181,67 +307,171 @@ definition
     then reconsider Fam as Subset-Family of Seg (width A);
     reconsider M = TopStruct(# Seg(width A), Fam #) as strict SubsetFamilyStr;
     take M;
-    A1: the carrier of M = Seg (width A);
-    for C being Subset of R ^* (len A) st C c= columns A
-    for I being Subset of Seg (width A)
-    st (for i being Nat holds i in I iff Col(A, i) in C)
-    holds I in the_family_of M iff C is linearly-independent
-    proof
-      let C be Subset of R ^* (len A);
-      assume A2: C c= columns A;
-      let I be Subset of Seg (width A);
-      assume A3: for i being Nat holds i in I iff Col(A, i) in C;
-      hereby
-        assume A4: I in the_family_of M;
-        then ex F being Subset of Seg (width A) st F = I &
-        ex C2 being Subset of R ^* (len A)
-        st C2 c= columns A & (for i being Nat holds i in F iff Col(A, i) in C2)
-        & C2 is linearly-independent;
-        then consider C2 being Subset of R ^* (len A) such that
-        A5: C2 c= columns A and
-        A6: (for i being Nat holds i in I iff Col(A, i) in C2) and
-        A7: C2 is linearly-independent;
-        for x being object
-        holds x in C iff x in C2
-        proof
-          let x be object;
-          thus x in C implies x in C2
-          proof
-            assume A8: x in C;
-            then x in columns A by A2;
-            then consider i9 being Nat such that
-            A9: x = Col(A, i9) & i9 in Seg(len A);
-            i9 in I by A3,A8,A9;
-            hence x in C2 by A6,A9;
-          end;
-          assume A10: x in C2;
-          then x in columns A by A5;
-          then consider i9 being Nat such that
-          A11: x = Col(A, i9) & i9 in Seg(len A);
-          i9 in I by A6,A10,A11;
-          hence x in C by A3,A11;
-        end;
-        then C = C2 by TARSKI:2;
-        hence C is linearly-independent by A7;
-      end;
-      assume A12: C is linearly-independent;
-      hence I in the_family_of M by A2,A3;
-    end;
-    hence thesis;
+    thus thesis;
   end;
   uniqueness;
+end;
+
+theorem Th29:
+  for I being Subset of Seg(width A)
+  holds I in the_family_of vector_matroid A
+    iff I-indexed_columns_of A is linearly-independent
+proof
+  let I be Subset of Seg(width A);
+  thus I in the_family_of vector_matroid A implies
+       I-indexed_columns_of A is linearly-independent
+  proof
+    assume I in the_family_of vector_matroid A;
+    then I in {I9 where I9 is Subset of Seg(width A) :
+               I9-indexed_columns_of A is linearly-independent }
+    by Def3;
+    then ex I9 being Subset of Seg(width A)
+    st I = I9 & I9-indexed_columns_of A is linearly-independent;
+    hence I-indexed_columns_of A is linearly-independent;
+  end;
+  thus I-indexed_columns_of A is linearly-independent implies
+       I in the_family_of vector_matroid A
+  proof
+    assume A1: I-indexed_columns_of A is linearly-independent;
+    then ex I9 being Subset of Seg(width A)
+    st I = I9 & I9-indexed_columns_of A is linearly-independent;
+    then I in {I9 where I9 is Subset of Seg(width A) :
+               I9-indexed_columns_of A is linearly-independent };
+    hence I in the_family_of vector_matroid A by Def3;
+  end;
+end;
+
+theorem Th30a:
+  for I1,I2 being Subset of Seg(width A)
+  st I1 c= I2
+  holds I1-indexed_columns_of A c= I2-indexed_columns_of A
+proof
+  let I1,I2 be Subset of Seg(width A);
+  assume A1: I1 c= I2;
+  for x being object st x in I1-indexed_columns_of A
+  holds x in I2-indexed_columns_of A
+  proof
+    let x be object;
+    assume A2: x in I1-indexed_columns_of A;
+    then consider i being Nat such that
+    A3: i in I1 & x = Col(A, i)
+    by Th22;
+    i in I2 by A1,A3;
+    hence x in I2-indexed_columns_of A by A3,Th22;
+  end;
+  hence I1-indexed_columns_of A c= I2-indexed_columns_of A;
+end;
+
+theorem Th30:
+  for I1,I2 being Subset of Seg(width A)
+  st I1 c= I2 & I2-indexed_columns_of A is linearly-independent
+  holds I1-indexed_columns_of A is linearly-independent
+proof
+  let I1,I2 be Subset of Seg(width A);
+  assume A1: I1 c= I2;
+  assume A2: I2-indexed_columns_of A is linearly-independent;
+  I1-indexed_columns_of A c= I2-indexed_columns_of A by A1, Th30a;
+  hence I1-indexed_columns_of A is linearly-independent by A2, VECTSP_7:1;
+end;
+
+theorem Th31:
+  for I1,I2 being set
+  st I1 c= I2 & I2 is Subset of Seg(width A)
+  holds I1 is Subset of Seg(width A)
+proof
+  let I1,I2 be set;
+  assume A1: I1 c= I2;
+  assume A2: I2 is Subset of Seg(width A);
+  for x being object st x in I1 holds x in Seg(width A)
+  proof
+    let x be object;
+    assume x in I1;
+    then x in I2 by A1, TARSKI:def 5;
+    hence x in Seg(width A) by A2, TARSKI:def 5;
+  end;
+  then I1 c= Seg(width A) by TARSKI:def 5;
+  hence I1 is Subset of Seg(width A);
+end;
+
+theorem Th34a:
+  for I1,I2 being set
+  st I1 c= I2 & I2 in the_family_of vector_matroid A
+  holds I1 in the_family_of vector_matroid A
+proof
+  defpred P[set] means $1-indexed_columns_of A is linearly-independent;
+  let I1,I2 be set;
+  assume A1: I1 c= I2;
+  assume A2: I2 in the_family_of vector_matroid A;
+  then I2 in {I where I is Subset of Seg(width A) :
+  I-indexed_columns_of A is linearly-independent } by Def3;
+  then A3: ex J2 being Subset of Seg(width A) st I2 = J2 & P[J2];
+  then reconsider J2 = I2 as Subset of Seg(width A);
+  I2 = J2 & J2 is Subset of Seg(width A);
+  then reconsider J1 = I1 as Subset of Seg(width A) by A1, Th31;
+  J2-indexed_columns_of A is linearly-independent by A3, Th29;
+  then J1-indexed_columns_of A is linearly-independent by A1,Th30;
+  then J1 in the_family_of vector_matroid A by Th29;
+  hence I1 in the_family_of vector_matroid A;
+end;
+
+registration
+  let R, A;
+  cluster vector_matroid A -> subset-closed;
+  correctness
+  proof
+    for X,Y being set
+    st X in the_family_of vector_matroid A & Y c= X
+    holds Y in the_family_of vector_matroid A by Th34a;
+    then the_family_of vector_matroid A is subset-closed by CLASSES1:def 1;
+    hence thesis by MATROID0:def 3;
+  end;
+end;
+
+registration
+  let R, A;
+  cluster vector_matroid A -> finite;
+  coherence
+  proof
+    Seg(width A) is finite;
+    then the carrier of vector_matroid A is finite by Def3;
+    hence thesis;
+  end;
+end;
+
+theorem ThWithExchangeProperty:
+  for U1,U2 being finite Subset of vector_matroid A
+  st U1 in the_family_of vector_matroid A
+  & U2 in the_family_of vector_matroid A
+  & card U2 = card U1 + 1
+  ex b being Element of vector_matroid A
+  st b in U2 \ U1 & U1 \/ {b} in the_family_of vector_matroid A
+proof
+  let U1,U2 be finite Subset of vector_matroid A;
+  assume A1: U1 in the_family_of vector_matroid A;
+  assume A2: U2 in the_family_of vector_matroid A;
+  assume A3: card U2 = card U1 + 1;
+  then A4: card U1 < card U2 by NAT_1:13;
+  then consider b being set such that
+  A5: b in U2 \ U1 by MATROID0:5;
+  b in U2 by A5, XBOOLE_0:def 5;
+  then b in vector_matroid A;
+  then reconsider b9 = b as Element of vector_matroid A;
+  take b9;
+  thus b9 in U2 \ U1 by A5;
+  thus U1 \/ {b9} in the_family_of vector_matroid A;
+::>                                               *4
 end;
 
 registration
   let R, A;
   cluster vector_matroid A -> non empty;
   correctness;
+::>         *4
   cluster vector_matroid A -> non void;
   correctness;
-  cluster vector_matroid A -> subset-closed;
-  correctness;
+::>         *4
   cluster vector_matroid A -> with_exchange_property;
-  correctness;
+  correctness by ThWithExchangeProperty, MATROID0:def 4;
   cluster vector_matroid A -> finite-degree;
   correctness;
 end;
@@ -254,6 +484,7 @@ theorem
 :: [matroid] rank of the vector matroid of the matrix
 theorem
   the_rank_of A = Rnk (vector_matroid A);
+::>                                    *4,4
 
 begin :: Representations
 
@@ -352,6 +583,7 @@ theorem Th11:
   for A being Matrix of m,n,R st A represents M
   for l,k being Nat
   holds InterchangeLine(A, l, k) represents M;
+::>                                         *4
 
 :: Oxley 2.2.2
 theorem Th12:
@@ -361,6 +593,7 @@ theorem Th12:
   for l being Nat
   for a being Element of R st a <> 0.R
   holds ScalarXLine(A, l, a) represents M;
+::>                                     *4,4
 
 :: Oxley 2.2.3
 theorem Th13:
@@ -370,6 +603,7 @@ theorem Th13:
   for l,k being Nat st k in dom A
   for a being Element of R st a <> 0.R
   holds RlineXScalar(A, l, k, a) represents M;
+::>                                         *4,4
 
 :: Oxley 2.2.4
 :: NB: "A ^ B" is Mizar notation for \begin{pmatrix}A\\\hrule B\end{pmatrix}
@@ -379,6 +613,7 @@ theorem Th14:
   for M being R-representable Matroid
   for A being Matrix of m,n,R
   holds A represents M iff A ^ 0.(R,l,n) represents M;
+::>                                                 *4,4
 
 :: Oxley 2.2.5
 theorem Th15:
@@ -387,6 +622,7 @@ theorem Th15:
   for A being Matrix of m,n,R st A represents M
   for l,k being Nat st l in Seg(width A) & k in Seg(width A)
   holds InterchangeCol(A, l, k) represents M;
+::>                                        *4
 
 :: Oxley 2.2.6 --- not needed to prove every rep yields a standard rep
 theorem Th16:
@@ -396,6 +632,7 @@ theorem Th16:
   for l being Nat st l in Seg(width A)
   for a being Element of R st a <> 0.R
   holds ScalarXCol(A, l, a) represents M;
+::>                                    *4,4
 
 :: Oxley 2.2.7 notes that replacing each matrix entry by its image
 :: under some automorphism of F produces another matrix A2
@@ -617,6 +854,7 @@ theorem Th18:
   & (ex B being Matrix of (len A),F
      st B = Fam.(len Fam)
       & B * A in_row_echelon_form);
+::>                              *4
 
 theorem Th19:
   for A being Matrix of F st A in_row_echelon_form
@@ -630,6 +868,7 @@ theorem Th19:
   & (ex B being Matrix of (len A),F
      st B = Fam.(len Fam)
       & B * A in_reduced_row_echelon_form);
+::>                                      *4
 
 :: Gaussian elimination, in all its gory details!
 ::$N Gaussian Elimination
@@ -694,9 +933,11 @@ proof
        for Fi being Matrix of (len A),F st Fi = Fam.i
        ex B being elementary_row Matrix of (len A),F
        st Fam.(i + 1) = B * Fi by A2,A3,A5;
+::>                             *4
   thus ex B being Matrix of (len A),F
        st B = Fam.(len Fam)
         & B * A in_reduced_row_echelon_form by A2,A3,A4,A5;
+::>                                          *4
 end;
 
 begin :: Elementary transformations on vector Matroids
@@ -911,6 +1152,7 @@ theorem Th21:
   for M being elementary_row Matrix of F
   st width M = len A
   holds vector_matroid A, vector_matroid (M * A) are_isomorphic;
+::>                                                           *4
 
 theorem Th22:
   for A being Matrix of m,n,F
@@ -1010,6 +1252,7 @@ theorem Th24:
   for M being elementary_row Matrix of F
   st width M = len A
   holds vector_matroid A = vector_matroid (M * A);
+::>                                             *4,4
 
 theorem Th25:
   for A being Matrix of m,n,F
@@ -1111,6 +1354,7 @@ theorem
   ex B being Representation of M
   st vector_matroid A = vector_matroid B
   & B in_reduced_row_echelon_form;
+::>                             *4
 
 begin :: Oxley's theorem
 
@@ -1120,6 +1364,7 @@ theorem
   st len A = len B :: number of rows in A = number of rows in B
   for i being Nat
   holds Line(A ^^ B, i) = Line(A, i) ^ Line(B, i);
+::>                                             *4,4,4,4
 
 theorem
   for A being Representation of M
@@ -1128,10 +1373,12 @@ theorem
    & (for i,j being Nat st [i,j] in Indices 1.(R,len A)
       holds 1.(R, len A) * (i,j) = A * (i,j))
   holds A is full;
+::>             *4,4,4
 
 theorem Th30:
   ex A being Representation of M
   st A is full;
+::>          *4
 
 registration
   let R,M;
@@ -1151,6 +1398,7 @@ end;
 theorem Th31:
   for S being Representation of M st S is standard
   holds Seg (len S) is Basis of vector_matroid S;
+::>                                            *4
 
 :: lemma Matrix.exists_standardRepr_isBase
 theorem Th32:
@@ -1161,6 +1409,7 @@ theorem Th32:
   st S is standard
    & len S = card G
    & vector_matroid S = vector_matroid A;
+::>                                    *4
 
 theorem Th33:
   for R being Skew-Field
@@ -1246,6 +1495,7 @@ registration
   let n be Nat;
   cluster 1.(R,n) -> totally-unimodular;
   correctness;
+::>         *4
 end;
 
 definition
@@ -1261,26 +1511,31 @@ theorem Th34:
   for m,n being Nat
   for l,k being Nat
   holds InterchangeLine(1.(R,m), l, k) is TU-preserving;
+::>                                                   *4,4
 
 theorem Th35:
   for m,l being Nat
   for a being Element of R st a <> 0.R
   holds ScalarXLine(1.(R,m), l, a) is TU-preserving;
+::>                                               *4,4,4,4
 
 theorem Th36:
   for m,l,k being Nat
   for a being Element of R st a <> 0.R
   holds RlineXScalar(1.(R,m), l, k, a) is TU-preserving;
+::>                                                   *4,4,4,4
 
 
 theorem Th37:
   for m,l,k being Nat st l in 1.(R,m) & k in 1.(R,m)
   holds InterchangeCol(1.(R,m), l, k) is TU-preserving;
+::>                                                  *4,4
 
 registration
   let R;
   cluster elementary_row -> TU-preserving for Matrix of R;
   correctness by Th34,Th35,Th36,Th37;
+::>            *4,4,4,4
 end;
 
 theorem
@@ -1293,6 +1548,7 @@ theorem
    & S is standard
    & vector_matroid S = vector_matroid A
    & S is totally-unimodular;
+::>                        *4
 
 :: lemma Matrix.exists_standardRepr_isBase_isTotallyUnimodular
 theorem
@@ -1305,5 +1561,6 @@ theorem
    & S is standard
    & vector_matroid S = vector_matroid A
    & S is totally-unimodular;
-  
+::>                        *4
 
+::> 4: This inference is not accepted

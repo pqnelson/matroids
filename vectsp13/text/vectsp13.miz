@@ -1,0 +1,4235 @@
+:: Some Standard Examples of Vector Spaces
+::  by Christoph Schwarzweller and Agnieszka Rowi\'nska-Schwarzweller
+:: 
+:: Received December 24, 2024
+:: Copyright (c) 2024-2025 Association of Mizar Users
+::           (Stowarzyszenie Uzytkownikow Mizara, Bialystok, Poland).
+:: This code can be distributed under the GNU General Public Licence
+:: version 3.0 or later, or the Creative Commons Attribution-ShareAlike
+:: License version 3.0 or later, subject to the binding interpretation
+:: detailed in file COPYING.interpretation.
+:: See COPYING.GPL and COPYING.CC-BY-SA for the full text of these
+:: licenses, or see http://www.gnu.org/licenses/gpl.html and
+:: http://creativecommons.org/licenses/by-sa/3.0/.
+
+environ
+
+ vocabularies NUMBERS, SUBSET_1, RLVECT_1, XBOOLE_0, ALGSTR_0, BINOP_1, NAT_1,
+      FUNCT_1, ARYTM_3, RELAT_1, VECTSP_1, MESFUNC1, SUPINF_2, STRUCT_0,
+      TARSKI, FUNCOP_1, ARYTM_1, FINSEQ_1, MSSUBFAM, UNIALG_1, FINSEQ_2,
+      XXREAL_0, MOD_3, CARD_3, RLSUB_1, FINSET_1, CARD_1, PARTFUN1, UPROOTS,
+      RLVECT_3, RLVECT_5, FUNCSDOM, ZFMISC_1, FIELD_6, AFINSQ_1, VALUED_1,
+      FUNCT_2, RANKNULL, WELLORD1, RLVECT_2, NEWTON, ORDINAL4, VECTSP13,
+      ROBBINS1, RADIX_1, RING_3, REALSET1, ENS_1;
+ notations TARSKI, XBOOLE_0, ZFMISC_1, SUBSET_1, CARD_1, XCMPLX_0, DOMAIN_1,
+      ORDINAL1, FUNCOP_1, NUMBERS, RELAT_1, REALSET1, FUNCT_1, RELSET_1,
+      FINSET_1, ALGSTR_0, PARTFUN1, FUNCT_2, STRUCT_0, NEWTON, XXREAL_0,
+      FINSEQ_1, BINOP_1, FINSEQ_2, FINSEQ_7, GROUP_1, MOD_2, VECTSP_1,
+      VECTSP_4, VECTSP_6, VECTSP_7, RLVECT_1, MATRLIN, RANKNULL, VECTSP_9,
+      FVSUM_1;
+ constructors FVSUM_1, RELSET_1, RANKNULL, FINSEQ_7, NEWTON, VECTSP_9,
+      REALSET1, FIELD_4, WELLORD2;
+ registrations XBOOLE_0, RELAT_1, FUNCT_1, ORDINAL1, FUNCT_2, FINSET_1,
+      XREAL_0, FINSEQ_1, FINSEQ_2, STRUCT_0, VECTSP_1, FUNCOP_1, RELSET_1,
+      INT_1, NAT_1, CARD_1, VECTSP_7, NEWTON, VECTSP_9, EC_PF_1, RLVECT_1,
+      ALGSTR_1, FIELD_7, VECTSP11, ZMODUL06;
+ requirements NUMERALS, ARITHM, REAL, BOOLE, SUBSET;
+ equalities RELAT_1, REALSET1, BINOP_1, FINSEQ_1, VECTSP_4, VECTSP_6, STRUCT_0,
+      ALGSTR_0;
+ expansions TARSKI, XBOOLE_0, FUNCT_1, FINSEQ_1, STRUCT_0;
+ theorems ZFMISC_1, FUNCT_2, FINSEQ_1, FVSUM_1, FINSEQ_2, ORDINAL1, RLVECT_1,
+      FINSEQ_7, FUNCOP_1, TARSKI, VECTSP_1, PARTFUN1, ALGSTR_0, FUNCT_1, MOD_2,
+      VECTSP_4, VECTSP_6, VECTSP_7, XBOOLE_0, CARD_1, CARD_FIN, XBOOLE_1,
+      INT_1, FIELD_7, RELAT_1, POLYNOM2, NAT_1, RANKNULL, MATRLIN, VECTSP_9,
+      VECTSP12, GROUP_1, CARD_2, XXREAL_0, XREAL_1, FINSEQ_3, WELLORD2,
+      RLVECT_2, MATRLIN2, MATRIXR1, MATRIX_3, BINOM;
+ schemes NAT_1, FUNCT_1, FUNCT_2, BINOP_1, INT_1, FINSEQ_1;
+
+begin :: Preliminaries
+
+theorem lemiso:
+for X,Y being non empty finite set st card Y = card X
+ex f being Function of X,Y st f is bijective
+proof
+  let X,Y be non empty finite set;
+assume card Y = card X;
+then X,Y are_equipotent by CARD_1:5;
+then consider f be Function such that
+   F: f is one-to-one & dom f = X & rng f = Y by WELLORD2:def 4;
+reconsider f as Function of X,Y by F,FUNCT_2:1;
+take f;
+f is onto by F,FUNCT_2:def 3;
+hence thesis by F;
+end;
+
+registration
+let L be non empty addLoopStr;
+let n be Nat;
+let u,v be n-element FinSequence of (the carrier of L);
+cluster u + v -> n-element;
+coherence
+proof
+the carrier of L c= the carrier of L; then
+reconsider u1 = u, v1 = v as Element of n-tuples_on the carrier of L
+  by FINSEQ_2:109;
+u1 + v1 is Element of n-tuples_on the carrier of L;
+hence thesis;
+end;
+end;
+
+registration
+let M be non empty multMagma;
+let n be Nat;
+let u be n-element FinSequence of (the carrier of M);
+let a be Element of M;
+cluster a * u -> n-element;
+coherence
+proof
+the carrier of M c= the carrier of M; then
+reconsider v = u as Element of n-tuples_on the carrier of M by FINSEQ_2:109;
+a * v is Element of n-tuples_on the carrier of M;
+hence thesis;
+end;
+end;
+
+theorem Lm1:
+for R be non empty Abelian addLoopStr, n be Nat
+for u,v being Tuple of n,(the carrier of R) holds u + v = v + u
+proof
+let R be non empty Abelian addLoopStr,
+    n be Nat, u,v be Tuple of n,(the carrier of R);
+set w1 = u + v, w2 = v + u;
+reconsider u1 = u, v1 = v as Element of n-tuples_on the carrier of R
+   by FINSEQ_2:131;
+now let i be Nat;
+  assume AS: i in Seg n;
+  reconsider a = u/.i, b = v/.i as Element of R;
+  J: dom v = Seg len v1 by FINSEQ_1:def 3 .= Seg n by FINSEQ_2:133;
+  dom u = Seg len u1 by FINSEQ_1:def 3 .= Seg n by FINSEQ_2:133; then
+  H: a = u1.i & b = v1.i by J,AS,PARTFUN1:def 6; then
+  w1.i = a + b by AS,FVSUM_1:18 .= w2.i by H,AS,FVSUM_1:18;
+  hence w1.i = w2.i;
+  end;
+hence thesis by FINSEQ_2:119;
+end;
+
+theorem Lm2:
+for R be non empty add-associative addLoopStr, n be Nat
+for u,v,w being Tuple of n,(the carrier of R) holds (u + v) + w = u + (v + w)
+proof
+let R be non empty add-associative addLoopStr,
+    n be Nat, u,v,w be Tuple of n,(the carrier of R);
+set p = u + v, q = v + w;
+reconsider u1 = u, v1 = v, w1 = w,
+           p1 = p, q2 = q as Element of n-tuples_on the carrier of R
+   by FINSEQ_2:131;
+now let i be Nat;
+   assume AS: i in Seg n;
+   reconsider a = u/.i, b = v/.i, c = w/.i as Element of R;
+   J: dom v = Seg len v1 by FINSEQ_1:def 3 .= Seg n by FINSEQ_2:133;
+   K: dom w = Seg len w1 by FINSEQ_1:def 3 .= Seg n by FINSEQ_2:133;
+   dom u = Seg len u1 by FINSEQ_1:def 3 .= Seg n by FINSEQ_2:133; then
+   H: a = u1.i & b = v1.i & c = w1.i by K,J,AS,PARTFUN1:def 6; then
+A: p1.i = a + b by AS,FVSUM_1:18;
+B: q2.i = b + c by AS,H,FVSUM_1:18;
+   thus (p1 + w).i
+          = (a + b) + c by AS,A,H,FVSUM_1:18
+         .= a + (b + c) by RLVECT_1:def 3
+         .= (u + q2).i by AS,B,H,FVSUM_1:18;
+   end;
+hence thesis by FINSEQ_2:119;
+end;
+
+dtr:for F be Field, V be VectSp of F holds
+  V is trivial iff the carrier of V = {0.V}
+proof
+  let F be Field, V be VectSp of F;
+  thus V is trivial implies the carrier of V = {0.V}
+  proof
+    assume V:V is trivial;
+    now let y be object;
+      assume y in the carrier of V;
+      then y = 0.V by V;
+      hence y in {0.V} by TARSKI:def 1;
+    end;
+    hence thesis by TARSKI:def 3;
+  end;
+  thus thesis;
+end;
+
+registration
+let F be Field;
+cluster -> finite-dimensional for trivial VectSp of F;
+coherence
+proof
+let V be trivial VectSp of F;
+set 0V = (0).V;
+A: the carrier of 0V c= the carrier of V & 0.0V = 0.V &
+   the addF of 0V = (the addF of V)||the carrier of 0V &
+   the lmult of 0V = (the lmult of V)|[:the carrier of F, the carrier of 0V:]
+   by VECTSP_4:def 2;
+B: the carrier of 0V = {0.V} by VECTSP_4:def 3 .= the carrier of V by dtr;
+Lin({}(the carrier of V)) = the ModuleStr of V by A,B,VECTSP_7:9;
+then {}(the carrier of V) is base by VECTSP_7:def 3;
+hence thesis by MATRLIN:def 1;
+end;
+end;
+
+registration
+let F be Field;
+let V be non trivial VectSp of F;
+cluster non empty finite linearly-independent for Subset of V;
+existence
+proof
+now assume A: for v being Element of V holds v = 0.V;
+  B: now let o be object;
+     assume o in the carrier of V;
+     then o = 0.V by A;
+     hence o in {0.V} by TARSKI:def 1;
+     end;
+  for o being object st o in {0.V} holds o in the carrier of V;
+  hence contradiction by B,TARSKI:2;
+  end; then
+consider v being Element of V such that A: v <> 0.V;
+take {v};
+thus thesis by A,VECTSP_7:3;
+end;
+end;
+
+registration
+let F be Field;
+let V be non trivial finite-dimensional VectSp of F;
+cluster -> non empty for Basis of V;
+coherence
+proof
+let B be Basis of V;
+dim V <> 0 by MATRLIN2:42;
+then card B <> 0 by VECTSP_9:def 1;
+hence thesis;
+end;
+end;
+
+begin :: On Linear Transformations
+
+definition
+let F be Field;
+let U,V be VectSp of F;
+let B be non empty Subset of U;
+let f being Function of B,V;
+redefine func rng f -> Subset of V;
+coherence
+proof
+for o being object st o in rng f holds o in the carrier of V;
+hence thesis;
+end;
+end;
+
+theorem lembas1:
+for F being Field
+for U being VectSp of F
+for B being linearly-independent Subset of U
+for w being Element of U st w in B
+for l being Linear_Combination of B st Sum l = w
+holds Carrier l = { w } & l.w = 1.F
+proof
+let F be Field, U be VectSp of F, B be linearly-independent Subset of U;
+let w be Element of U;
+assume AS1: w in B;
+let l be Linear_Combination of B;
+assume AS2: Sum l = w;
+defpred Q[object,object] means
+           ($1 = w & $2 = 1.F) or ($1 <> w & $2 = 0.F);
+      B4: for x being object st x in the carrier of U
+          ex y being object st y in the carrier of F & Q[x,y]
+         proof
+         let x be object;
+         assume x in the carrier of U;
+         per cases;
+         suppose x = w;
+           hence ex y being object st y in the carrier of F & Q[x,y];
+           end;
+         suppose x <> w;
+           hence ex y being object st y in the carrier of F & Q[x,y];
+           end;
+         end;
+consider l1 being Function of the carrier of U,the carrier of F such that
+B5: for x being object st x in the carrier of U holds Q[x,l1.x]
+    from FUNCT_2:sch 1(B4);
+reconsider l1 as Element of Funcs(the carrier of U, the carrier of F)
+    by FUNCT_2:8;
+      for v being Element of U st not v in {w} holds l1.v = 0.F
+        proof
+        let v be Element of U;
+        assume not v in {w};
+        then v <> w by TARSKI:def 1;
+        hence l1.v = 0.F by B5;
+        end; then
+      reconsider l1 as Linear_Combination of U by VECTSP_6:def 1;
+      now let o be object;
+        assume o in Carrier l1;
+        then consider v being Element of U such that
+        C1: o = v & l1.v <> 0.F;
+        v = w & l1.v = 1.F by B5,C1;
+        hence o in {w} by C1,TARSKI:def 1;
+        end; then
+      B6: Carrier(l1) c= {w}; then
+      Carrier(l1) c= B by AS1,TARSKI:def 1; then
+      reconsider l1 as Linear_Combination of B by VECTSP_6:def 4;
+      B8: Carrier l1 = {w}
+          proof
+          now let o be object;
+            assume C1: o in {w};
+            then o = w by TARSKI:def 1;
+            then l1.o <> 0.F by B5;
+            hence o in Carrier l1 by C1;
+            end;
+          then {w} c= Carrier l1;
+          hence thesis by B6;
+          end;
+B: l1.w = 1.F by B5;
+Sum l1 = (l1.w) * w by B8,VECTSP_6:20 .= 1.F * w by B5 .= w;
+hence thesis by B8,AS2,B,FIELD_7:6;
+end;
+
+theorem canlinsurj1:
+for F being Field
+for U,V being VectSp of F
+for B being Subset of U
+for A being Subset of V
+for T being linear-transformation of U,V st T .: B c= A
+for l being Linear_Combination of B holds T.(Sum l) in Lin A
+proof
+let F be Field, U,V be VectSp of F;
+let B be Subset of U, A be Subset of V;
+let T be linear-transformation of U,V;
+assume AS: T .: B c= A;
+let l be Linear_Combination of B;
+defpred P[Nat] means
+  for l being Linear_Combination of B
+  st card(Carrier l) = $1 holds T.(Sum l) in Lin A;
+IA: P[0]
+    proof
+    let l be Linear_Combination of B;
+    assume card(Carrier l) = 0; then
+    Carrier l= {}; then
+    l = ZeroLC(U) by VECTSP_6:def 3; then
+    Sum l = 0.U by VECTSP_6:15; then
+    C: T.(Sum l) = 0.V by RANKNULL:9;
+    0.(Lin A) = 0.V by VECTSP_4:def 2;
+    hence T.(Sum l) in Lin A by C;
+    end;
+IS: now let k be Nat;
+    assume IV: P[k];
+    now let l be Linear_Combination of B;
+      assume B1: card(Carrier l) = k + 1; then
+      Carrier l <> {}; then
+      consider o being object such that
+      B2: o in Carrier l by XBOOLE_0:def 1;
+      consider u being Element of U such that
+      B3: o = u & l.u <> 0.F by B2;
+      defpred Q[object,object] means
+           ($1 = u & $2 = l.u) or ($1 <> u & $2 = 0.F);
+      B4: for x being object st x in the carrier of U
+          ex y being object st y in the carrier of F & Q[x,y]
+         proof
+         let x be object;
+         assume x in the carrier of U;
+         per cases;
+         suppose x = u;
+           hence ex y being object st y in the carrier of F & Q[x,y];
+           end;
+         suppose x <> u;
+           hence ex y being object st y in the carrier of F & Q[x,y];
+           end;
+         end;
+      consider l1 being Function of the carrier of U,the carrier of F such that
+      B5: for x being object st x in the carrier of U holds Q[x,l1.x]
+          from FUNCT_2:sch 1(B4);
+      reconsider l1 as Element of Funcs(the carrier of U, the carrier of F)
+        by FUNCT_2:8;
+      for v being Element of U st not v in {u} holds l1.v = 0.F
+        proof
+        let v be Element of U;
+        assume not v in {u};
+        then v <> u by TARSKI:def 1;
+        hence l1.v = 0.F by B5;
+        end; then
+      reconsider l1 as Linear_Combination of U by VECTSP_6:def 1;
+      now let o be object;
+        assume o in Carrier l1;
+        then consider v being Element of U such that
+        C1: o = v & l1.v <> 0.F;
+        v = u & l1.v = l.u by B5,C1;
+        hence o in {u} by C1,TARSKI:def 1;
+        end; then
+      B6: Carrier(l1) c= {u};
+      now let o be object;
+          assume o in Carrier l1;
+          then o = u by B6,TARSKI:def 1;
+          then C1: o in Carrier l by B3;
+          Carrier l c= B by VECTSP_6:def 4;
+          hence o in B by C1;
+          end; then
+      Carrier(l1) c= B; then
+      reconsider l1 as Linear_Combination of B by VECTSP_6:def 4;
+      B8: Carrier l1 = {u}
+          proof
+          now let o be object;
+            assume C1: o in {u};
+            then o = u by TARSKI:def 1;
+            then l1.o <> 0.F by B5,B3;
+            hence o in Carrier l1 by C1;
+            end;
+          then {u} c= Carrier l1;
+          hence thesis by B6;
+          end;
+      reconsider l2 = l - l1 as Linear_Combination of B by VECTSP_6:42;
+      C1: Carrier l2 = (Carrier l) \ (Carrier l1)
+          proof
+          C4: now let o be object;
+              assume o in Carrier l2;
+              then consider v being Element of U such that
+              C5: o = v & l2.v <> 0.F;
+              C6: now assume C7: v = u;
+                  l2.v = l.v - l1.v by VECTSP_6:40
+                      .= l.v - l.v by B5,C7;
+                  hence contradiction by C5,RLVECT_1:15;
+                  end; then
+             C7: not v in Carrier(l1) by B8,TARSKI:def 1;
+             l2.v = l.v - l1.v by VECTSP_6:40
+                 .= l.v - 0.F by C6,B5; then
+             v in Carrier l by C5;
+             hence o in Carrier(l) \ Carrier(l1) by C5,C7,XBOOLE_0:def 5;
+             end;
+         now let o be object;
+           assume o in Carrier(l) \ Carrier(l1); then
+           C5: o in Carrier(l) & not o in Carrier(l1) by XBOOLE_0:def 5; then
+           consider v being Element of U such that
+           C6: o = v & l.v <> 0.F;
+           l2.v = l.v - l1.v by VECTSP_6:40
+               .= l.v - 0.F by C6,C5;
+           hence o in Carrier l2 by C6;
+           end;
+         hence thesis by C4,TARSKI:2;
+         end;
+      now let o be object;
+        assume o in Carrier l1; then
+        C4: o = u by B8,TARSKI:def 1;
+        u in Carrier(l1) by B8,TARSKI:def 1; then
+        C5: l1.u <> 0.F by VECTSP_6:2;
+        l1.u = l.u by B5;
+        hence o in Carrier l by C4,C5;
+        end; then
+      Carrier l1 c= Carrier l; then
+      C2: card(Carrier(l) \ Carrier(l1))
+         = card(Carrier l) - card(Carrier l1) by CARD_2:44
+        .= (k + 1) - 1 by B1,B8,CARD_2:42;
+      C4: T.(Sum l1) = T.(l1.u * u) by B8,VECTSP_6:20
+                    .= l1.u * T.u by MOD_2:def 2;
+      C5: Carrier l c= B by VECTSP_6:def 4;
+      u in the carrier of U; then
+      u in dom T by FUNCT_2:def 1; then
+      T.u in T .: B by C5,B2,B3,FUNCT_1:108; then
+      T.u in Lin A by AS,VECTSP_7:8; then
+      consider ll being Linear_Combination of A such that
+      C6: T.u = Sum ll by VECTSP_7:7;
+      C7: l1.u * ll is Linear_Combination of A by VECTSP_6:31;
+      Sum(l1.u *ll) = l1.u * T.u by C6,VECTSP_7:22; then
+      consider l5 being Linear_Combination of A such that
+      D1: T.(Sum l1) = Sum l5 by C4,C7;
+      consider l6 being Linear_Combination of A such that
+      D2: T.(Sum l2) = Sum l6 by IV,C1,C2,VECTSP_7:7;
+      D3: l5 + l6 is Linear_Combination of A by VECTSP_6:24;
+      D4: Sum(l5 + l6) = T.(Sum l1) + T.(Sum l2) by D1,D2,VECTSP_6:44;
+      Sum l = Sum l1 + Sum l2
+          proof
+          reconsider l3 = l as Linear_Combination of U;
+          Sum l2 = Sum l - Sum l1 by VECTSP_6:47;
+          hence Sum l1 + Sum l2
+                    = Sum l + (-(Sum l1) + Sum l1) by RLVECT_1:def 3
+                   .= (Sum l3) + 0.U by RLVECT_1:5 .= Sum l;
+          end;
+      hence T.(Sum l) in Lin A by D3,D4,VECTSP_7:7,VECTSP_1:def 20;
+      end;
+    hence P[k+1];
+    end;
+I: for k being Nat holds P[k] from NAT_1:sch 2(IA,IS);
+consider n being Nat such that H: card(Carrier l) = n;
+thus thesis by H,I;
+end;
+
+theorem canLinuni:
+for F being Field
+for U,V being VectSp of F
+for B being Basis of U
+for T1,T2 being linear-transformation of U,V
+st T1|B = T2|B holds T1 = T2
+proof
+let F be Field, U,V being VectSp of F;
+let B be Basis of U, T1,T2 being linear-transformation of U,V;
+assume AS: T1|B = T2|B;
+defpred P[Nat] means
+  for l being Linear_Combination of B st card(Carrier l) = $1
+  holds T1.(Sum l) = T2.(Sum l);
+IA: P[0]
+    proof
+    let l be Linear_Combination of B;
+    assume card(Carrier l) = 0; then
+    Carrier l = {}; then
+    l = ZeroLC(U) by VECTSP_6:def 3; then
+    A: Sum l = 0.U by VECTSP_6:15;
+    hence T1.(Sum l) = 0.V by RANKNULL:9 .= T2.(Sum l) by A,RANKNULL:9;
+    end;
+IS: now let k be Nat;
+    assume IV: P[k];
+    now let l be Linear_Combination of B;
+      assume B1: card Carrier(l) = k+1; then
+      Carrier l <> {}; then
+      consider o being object such that
+      B2: o in Carrier l by XBOOLE_0:def 1;
+      consider u being Element of U such that
+      B3: o = u & l.u <> 0.F by B2;
+      defpred Q[object,object] means
+           ($1 = u & $2 = l.u) or ($1 <> u & $2 = 0.F);
+      B4: for x being object st x in the carrier of U
+          ex y being object st y in the carrier of F & Q[x,y]
+         proof
+         let x be object;
+         assume x in the carrier of U;
+         per cases;
+         suppose x = u;
+           hence ex y being object st y in the carrier of F & Q[x,y];
+           end;
+         suppose x <> u;
+           hence ex y being object st y in the carrier of F & Q[x,y];
+           end;
+         end;
+      consider l1 being Function of the carrier of U,the carrier of F such that
+      B5: for x being object st x in the carrier of U holds Q[x,l1.x]
+          from FUNCT_2:sch 1(B4);
+      reconsider l1 as Element of Funcs(the carrier of U, the carrier of F)
+        by FUNCT_2:8;
+      for v being Element of U st not v in {u} holds l1.v = 0.F
+        proof
+        let v be Element of U;
+        assume not v in {u};
+        then v <> u by TARSKI:def 1;
+        hence l1.v = 0.F by B5;
+        end; then
+      reconsider l1 as Linear_Combination of U by VECTSP_6:def 1;
+      now let o be object;
+        assume o in Carrier l1;
+        then consider v being Element of U such that
+        C1: o = v & l1.v <> 0.F;
+        v = u & l1.v = l.u by B5,C1;
+        hence o in {u} by C1,TARSKI:def 1;
+        end; then
+      B6: Carrier(l1) c= {u};
+      B7: now let o be object;
+          assume o in Carrier l1;
+          then o = u by B6,TARSKI:def 1;
+          then C1: o in Carrier l by B3;
+          Carrier l c= B by VECTSP_6:def 4;
+          hence o in B by C1;
+          end; then
+      Carrier(l1) c= B; then
+      reconsider l1 as Linear_Combination of B by VECTSP_6:def 4;
+      B8: Carrier l1 = {u}
+          proof
+          now let o be object;
+            assume C1: o in {u};
+            then o = u by TARSKI:def 1;
+            then l1.o <> 0.F by B5,B3;
+            hence o in Carrier l1 by C1;
+            end;
+          then {u} c= Carrier l1;
+          hence thesis by B6;
+          end; then
+      B9: Sum(l1) = l1.u * u by VECTSP_6:20;
+      reconsider l2 = l - l1 as Linear_Combination of B by VECTSP_6:42;
+      C0: T1.(Sum l1) = T2.(Sum l1)
+          proof
+          D1: u in Carrier(l1) by B8,TARSKI:def 1; then
+          D2: T1.u = (T2|B).u by B7,AS,FUNCT_1:49 .= T2.u by D1,B7,FUNCT_1:49;
+          thus T1.(Sum l1)
+              = l1.u * T1.u by B9,MOD_2:def 2
+             .= T2.(Sum l1) by D2,B9,MOD_2:def 2;
+          end;
+      C1: Carrier l2 = (Carrier l) \ (Carrier l1)
+          proof
+          C4: now let o be object;
+              assume o in Carrier l2;
+              then consider v being Element of U such that
+              C5: o = v & l2.v <> 0.F;
+              C6: now assume C7: v = u;
+                  l2.v = l.v - l1.v by VECTSP_6:40
+                      .= l.v - l.v by B5,C7;
+                  hence contradiction by C5,RLVECT_1:15;
+                  end; then
+             C7: not v in Carrier(l1) by B8,TARSKI:def 1;
+             l2.v = l.v - l1.v by VECTSP_6:40
+                 .= l.v - 0.F by C6,B5; then
+             v in Carrier l by C5;
+             hence o in Carrier(l) \ Carrier(l1) by C5,C7,XBOOLE_0:def 5;
+             end;
+         now let o be object;
+           assume o in Carrier(l) \ Carrier(l1); then
+           C5: o in Carrier(l) & not o in Carrier(l1) by XBOOLE_0:def 5; then
+           consider v being Element of U such that
+           C6: o = v & l.v <> 0.F;
+           l2.v = l.v - l1.v by VECTSP_6:40
+               .= l.v - 0.F by C6,C5;
+           hence o in Carrier l2 by C6;
+           end;
+         hence thesis by C4,TARSKI:2;
+         end;
+      now let o be object;
+        assume o in Carrier l1; then
+        C4: o = u by B8,TARSKI:def 1;
+        u in Carrier(l1) by B8,TARSKI:def 1; then
+        C5: l1.u <> 0.F by VECTSP_6:2;
+        l1.u = l.u by B5;
+        hence o in Carrier l by C4,C5;
+        end; then
+      Carrier l1 c= Carrier l; then
+      card(Carrier(l) \ Carrier(l1))
+         = card(Carrier l) - card(Carrier l1) by CARD_2:44
+        .= (k + 1) - 1 by B1,B8,CARD_2:42; then
+      C2: T1.(Sum l2) = T2.(Sum l2) by IV,C1;
+      C3: Sum l = Sum l1 + Sum l2
+          proof
+          reconsider l3 = l as Linear_Combination of U;
+          Sum l2 = Sum l - Sum l1 by VECTSP_6:47;
+          hence Sum l1 + Sum l2
+                    = Sum l + (-(Sum l1) + Sum l1) by RLVECT_1:def 3
+                   .= (Sum l3) + 0.U by RLVECT_1:5 .= Sum l;
+          end;
+      thus T1.(Sum l)
+         = T1.(Sum l1) + T1.(Sum l2) by C3,VECTSP_1:def 20
+        .= T2.(Sum l) by C0,C2,C3,VECTSP_1:def 20;
+      end;
+    hence P[k+1];
+    end;
+I: for k being Nat holds P[k] from NAT_1:sch 2(IA,IS);
+H: Lin B = the ModuleStr of U by VECTSP_7:def 3;
+now let o be object;
+  assume o in the carrier of U;
+  then o in the set of all Sum(l) where
+                  l is Linear_Combination of B by H,VECTSP_7:def 2;
+  then consider l being Linear_Combination of B such that
+  A: o = Sum(l);
+  consider n being Nat such that H: card(Carrier l) = n;
+  thus T1.o = T2.o by A,I,H;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+
+definition
+let F be Field;
+let U,V be VectSp of F;
+let B be non empty finite Subset of U;
+let l be Linear_Combination of B;
+let f be Function of B,V;
+let v be Element of V;
+func Expand(f,l,v) -> FinSequence of the carrier of F equals
+  l * (canFS f"{v});
+coherence
+proof
+A: rng canFS f"{v} c= f"{v} & dom l = the carrier of U &
+   dom f = B by FUNCT_2:def 1;
+now let o be object;
+  assume o in rng(canFS f"{v}); then
+    o in dom f & f.o in {v} by FUNCT_1:def 7;
+    hence o in dom l by A;
+    end; then
+rng canFS f"{v} c= dom l; then
+reconsider g = l * (canFS f"{v}) as FinSequence by FINSEQ_1:16;
+now let o be object;
+  assume o in rng g; then
+  o in rng l by FUNCT_1:14;
+  hence o in the carrier of F;
+  end; then
+rng g c= the carrier of F;
+hence thesis by FINSEQ_1:def 4;
+end;
+end;
+
+definition
+let F be Field;
+let U,V be VectSp of F;
+let B be non empty finite Subset of U;
+let l be Linear_Combination of B;
+let f be Function of B,V;
+func f (#) l -> Linear_Combination of (rng f) means :defK:
+  for v being Element of V holds it.v = Sum Expand(f,l,v);
+existence
+proof
+defpred P[object,object] means
+  (ex u being Element of B st $1 = f.u & $2 = Sum Expand(f,l,f.u)) or
+  ((not ex u being Element of B st $1 = f.u) & $2 = 0.F);
+A1: for x being object st x in the carrier of V
+    ex y being object st y in the carrier of F & P[x,y]
+    proof
+      let x be object;
+      assume x in the carrier of V;
+      then reconsider x as Element of V;
+      per cases;
+      suppose ex w being Element of B st x = f.w; then
+        consider w being Element of B such that B: x = f.w;
+        take Sum Expand(f,l,f.w);
+        thus thesis by B;
+        end;
+      suppose B: not ex w being Element of B st x = f.w;
+        take 0.F;
+        thus thesis by B;
+        end;
+    end;
+consider g being Function of the carrier of V, the carrier of F such that
+A2: for x being object st x in the carrier of V holds P[x,g.x]
+    from FUNCT_2:sch 1(A1);
+H: dom f = B by FUNCT_2:def 1;
+A7: for w being Element of V holds g.w = Sum Expand(f,l,w)
+    proof
+    let w be Element of V;
+    per cases;
+    suppose B0: ex x being Element of B st w = f.x;
+      P[w,g.w] by A2;
+      hence thesis by B0;
+      end;
+    suppose not ex x being Element of B st w = f.x; then
+      not ex x being object st x in dom f & w = f.x; then
+      B1: not w in rng f by FUNCT_1:def 3;
+      now let o be object;
+        assume o in {w} /\ rng f;
+        then o in {w} & o in rng f by XBOOLE_0:def 4;
+        hence contradiction by B1,TARSKI:def 1;
+        end; then
+      {w} misses rng f by XBOOLE_0:def 1; then
+      f"{w} = {} by RELAT_1:138; then
+      B2: Expand(f,l,w) = <*>(the carrier of F);
+      P[w,g.w] by A2;
+      hence thesis by B2,RLVECT_1:43;
+      end;
+    end;
+reconsider g as Element of Funcs(the carrier of V,the carrier of F)
+    by FUNCT_2:8;
+ex T being finite Subset of V st
+for v being Element of V st not v in T holds g.v = 0.F
+  proof
+  reconsider T = rng f as finite Subset of V;
+  take T;
+  now let v be Element of V;
+    B0: P[v,g.v] by A2;
+    assume not v in T;
+    hence g.v = 0.F by B0,H,FUNCT_1:def 3;
+    end;
+  hence thesis;
+  end; then
+reconsider g as Linear_Combination of V by VECTSP_6:def 1;
+Carrier g c= (rng f)
+  proof
+  now let o be object;
+    assume o in Carrier g; then
+    consider v being Element of V such that
+    B0: o = v & g.v <> 0.F;
+    consider u being Element of B such that
+    B1: v = f.u & g.v = Sum Expand(f,l,f.u) by B0,A2;
+    dom f = B by FUNCT_2:def 1;
+    hence o in (rng f) by B0,B1,FUNCT_1:3;
+    end;
+  hence thesis;
+  end; then
+reconsider g as Linear_Combination of (rng f) by VECTSP_6:def 4;
+take g;
+thus thesis by A7;
+end;
+uniqueness
+proof
+let g1,g2 be Linear_Combination of (rng f) such that
+A18: for w being Element of V holds g1.w = Sum Expand(f,l,w) and
+A19: for w being Element of V holds g2.w = Sum Expand(f,l,w);
+A20: for x being object st x in dom g1 holds g1.x = g2.x
+     proof
+     let x be object;
+     assume x in dom g1;
+     then reconsider x as Element of V;
+     H: Carrier g1 c= rng f & Carrier g2 c= rng f by VECTSP_6:def 4;
+     per cases;
+     suppose x in (rng f);
+       g1.x = Sum Expand(f,l,x) by A18;
+       hence thesis by A19;
+       end;
+     suppose A21: not x in (rng f);
+       then g1.x = 0.F by H,VECTSP_6:2 .= g2.x by A21,H,VECTSP_6:2;
+       hence thesis;
+       end;
+     end;
+dom g1 = [#]V & dom g2 = [#]V by FUNCT_2:92;
+hence thesis by A20;
+end;
+end;
+
+canlininj1:
+for F being Field
+for U,V being VectSp of F
+for B being non empty finite Subset of U
+for f being Function of B,V
+for l2 being Linear_Combination of (rng f)
+ex l1 being Linear_Combination of B st
+  for u being Element of U st u in B holds l1.u = l2.(f.u)
+proof
+let F be Field, U,V be VectSp of F;
+let B be non empty finite Subset of U;
+let f be Function of B,V, l2 be Linear_Combination of (rng f);
+defpred Q[object,object] means
+  ($1 in B & $2 = l2.(f.$1)) or (not $1 in B & $2 = 0.F);
+      B4: for x being object st x in the carrier of U
+          ex y being object st y in the carrier of F & Q[x,y]
+         proof
+         let x be object;
+         assume x in the carrier of U;
+         per cases;
+         suppose S: x in B;
+           then x in dom f by FUNCT_2:def 1;
+           then f.x in rng f by FUNCT_1:3;
+           then reconsider v = f.x as Element of V;
+           l2.v is Element of F;
+           hence ex y being object st y in the carrier of F & Q[x,y] by S;
+           end;
+         suppose not x in B;
+           hence ex y being object st y in the carrier of F & Q[x,y];
+           end;
+         end;
+    consider l1 being Function of the carrier of U,the carrier of F such that
+    B5: for x being object st x in the carrier of U holds Q[x,l1.x]
+        from FUNCT_2:sch 1(B4);
+reconsider l1 as Element of Funcs(the carrier of U, the carrier of F)
+   by FUNCT_2:8;
+for u being Element of U st not u in B holds l1.u = 0.F by B5; then
+reconsider l1 as Linear_Combination of U by VECTSP_6:def 1;
+   now let o be object;
+   assume o in Carrier l1;
+   then consider v being Element of U such that
+   C1: o = v & l1.v <> 0.F;
+   thus o in B by C1,B5;
+   end; then
+Carrier(l1) c= B; then
+reconsider l1 as Linear_Combination of B by VECTSP_6:def 4;
+take l1;
+thus thesis by B5;
+end;
+
+definition
+let F be Field;
+let U,V be VectSp of F;
+let B be non empty finite Subset of U;
+let f be Function of B,V;
+let l be Linear_Combination of (rng f);
+func l (#) f -> Linear_Combination of B means :defK1:
+  for u being Element of U st u in B holds it.u = l.(f.u);
+existence by canlininj1;
+uniqueness
+proof
+let g1,g2 be Linear_Combination of B such that
+A18: for u being Element of U st u in B holds g1.u = l.(f.u) and
+A19: for u being Element of U st u in B holds g2.u = l.(f.u);
+A20: for x being object st x in dom g1 holds g1.x = g2.x
+     proof
+     let x be object;
+     assume x in dom g1;
+     then reconsider x as Element of U;
+     H: Carrier g1 c= B & Carrier g2 c= B by VECTSP_6:def 4;
+     per cases;
+     suppose J: x in B; then
+       g1.x = l.(f.x) by A18;
+       hence thesis by J,A19;
+       end;
+     suppose A21: not x in B;
+       then g1.x = 0.F by H,VECTSP_6:2 .= g2.x by A21,H,VECTSP_6:2;
+       hence thesis;
+       end;
+     end;
+dom g1 = [#]U & dom g2 = [#]U by FUNCT_2:92;
+hence thesis by A20;
+end;
+end;
+
+XXX1:
+for F being Field
+for U,V being VectSp of F
+for B being non empty Subset of U
+for f being Function of B,V st f is one-to-one
+for v being Element of V st v in rng f holds f"{v} = {(f").v}
+proof
+let F be Field, U,V be VectSp of F;
+let B be non empty Subset of U, f be Function of B,V;
+assume A: f is one-to-one;
+let v be Element of V;
+assume v in rng f; then
+consider x being object such that B: f"{v} = {x} by A,FUNCT_1:74;
+x in f"{v} by B,TARSKI:def 1; then
+C: x in dom f & f.x in {v} by FUNCT_1:def 7; then
+v = f.x by TARSKI:def 1;
+hence thesis by B,A,C,FUNCT_1:34;
+end;
+
+theorem XXX2:
+for F being Field
+for U,V being VectSp of F
+for B being non empty finite Subset of U
+for f being Function of B,V st f is one-to-one
+for l being Linear_Combination of B
+for v being Element of V st v in rng f holds (f (#) l).v = l.(f".v)
+proof
+let F be Field, U,V be VectSp of F;
+let B be non empty finite Subset of U, f be Function of B,V;
+assume A: f is one-to-one;
+let l be Linear_Combination of B, v be Element of V;
+assume B: v in rng f; then
+consider x being object such that C: x in dom f & f.x = v by FUNCT_1:def 3;
+I: dom f = B by FUNCT_2:def 1; then
+reconsider u = x as Element of U by C;
+H: dom l = the carrier of U by FUNCT_2:def 1;
+v in dom(f") by A,B,FUNCT_1:33; then
+f".v in rng(f") by FUNCT_1:3; then
+K: f".v in dom f by A,FUNCT_1:33; then
+J: f".v in U by I;
+D: l.((f").v) in rng l by K,I,H,FUNCT_1:3;
+G: f"{v} = {(f").v} by A,B,XXX1; then
+E: canFS f"{v}  = <* (f").v *> by FINSEQ_1:94;
+set G = l * (canFS f"{v});
+F: dom G = Seg 1
+   proof
+   F1: now let o be object;
+       assume o in Seg 1; then
+       F2: o in dom canFS f"{v} by E,FINSEQ_1:38; then
+       (canFS f"{v}).o in rng(canFS f"{v}) by FUNCT_1:3; then
+       (canFS f"{v}).o = f".v by G,TARSKI:def 1; then
+       (canFS f"{v}).o in dom l by J,FUNCT_2:def 1;
+       hence o in dom G by F2,FUNCT_1:11;
+       end;
+   now let o be object;
+       assume o in dom G; then
+       o in dom canFS f"{v} by FUNCT_1:11;
+       hence o in Seg 1 by E,FINSEQ_1:38;
+       end;
+   hence thesis by F1,TARSKI:2;
+   end; then
+reconsider G as FinSequence by FINSEQ_1:def 2;
+now let o be object;
+  assume o in rng G; then
+  o in rng l by FUNCT_1:14;
+  hence o in the carrier of F;
+  end; then
+rng G c= the carrier of F; then
+reconsider G as FinSequence of the carrier of F by FINSEQ_1:def 4;
+dom canFS f"{v} = Seg 1 by E,FINSEQ_1:38; then
+1 in dom canFS f"{v}; then
+G.1 = l.((canFS f"{v}).1) by FUNCT_1:13
+    .= l.((f").v) by E; then
+l * (canFS f"{v}) = <* l.((f").v) *> by F,FINSEQ_1:def 8; then
+Sum Expand(f,l,v) = l.((f").v) by D,RLVECT_1:44;
+hence thesis by defK;
+end;
+
+theorem XXX3:
+for F being Field
+for U,V being VectSp of F
+for B being non empty finite Subset of U
+for f being Function of B,V st f is one-to-one
+for l being Linear_Combination of B holds (f (#) l) (#) f = l
+proof
+let F be Field, U,V be VectSp of F;
+let B be non empty finite Subset of U, f be Function of B,V;
+assume A: f is one-to-one;
+let l be Linear_Combination of B;
+set l2 = f (#) l;
+H: dom f = B by FUNCT_2:def 1;
+now let u be Element of U;
+  per cases;
+  suppose C: u in B; then
+    f.u in rng f by H,FUNCT_1:3; then
+    reconsider v = f.u as Element of V;
+    l2.v = l.(f".v) by A,C,H,FUNCT_1:3,XXX2;
+    hence (l2 (#) f).u = l.(f".v) by C,defK1 .= l.u by A,C,H,FUNCT_1:34;
+    end;
+  suppose C: not u in B;
+    Carrier l c= B by VECTSP_6:def 4; then
+    not u in Carrier l by C; then
+    D: l.u = 0.F;
+    Carrier(l2 (#) f) c= B by VECTSP_6:def 4;then
+    not u in Carrier(l2 (#) f) by C;
+    hence (l2 (#) f).u = l.u by D;
+    end;
+  end;
+hence thesis by VECTSP_6:def 7;
+end;
+
+theorem XXX4:
+for F being Field
+for U,V being VectSp of F
+for B being non empty finite Subset of U
+for f being Function of B,V st f is one-to-one
+for l being Linear_Combination of (rng f) holds f (#) (l (#) f) = l
+proof
+let F be Field, U,V be VectSp of F;
+let B be non empty finite Subset of U, f be Function of B,V;
+assume A: f is one-to-one;
+let l be Linear_Combination of (rng f);
+set l2 = l (#) f;
+H: dom f = B by FUNCT_2:def 1;
+now let v be Element of V;
+  per cases;
+  suppose C: v in rng f; then
+    consider u being object such that
+    D: u in dom f & f.u = v by FUNCT_1:def 3;
+    reconsider u as Element of U by H,D;
+    E: f".v = u by D,A,FUNCT_1:34;
+    l2.u = l.(f.u) by D,defK1;
+    hence (f (#) l2).v = l.v by D,E,C,A,XXX2;
+    end;
+  suppose C: not v in rng f;
+    Carrier l c= rng f by VECTSP_6:def 4; then
+    not v in Carrier l by C; then
+    D: l.v = 0.F;
+    Carrier(f (#) l2) c= rng f by VECTSP_6:def 4; then
+    not v in Carrier(f (#) l2) by C;
+    hence (f (#) l2).v = l.v by D;
+    end;
+  end;
+hence thesis by VECTSP_6:def 7;
+end;
+
+lemadd2b:
+for F being Field
+for U,V being VectSp of F
+for B being non empty finite Subset of U
+for f being Function of B,V
+for l being Linear_Combination of B
+for v being Element of V st not v in rng f holds (f (#) l).v = 0.F
+proof
+let F be Field, U,V be VectSp of F, B be non empty finite Subset of U;
+let f be Function of B,V, l be Linear_Combination of B;
+let v be Element of V;
+assume B1: not v in rng f;
+now let o be object;
+  assume o in {v} /\ rng f;
+  then o in {v} & o in rng f by XBOOLE_0:def 4;
+  hence contradiction by B1,TARSKI:def 1;
+  end; then
+{v} misses rng f by XBOOLE_0:def 1; then
+f"{v} = {} by RELAT_1:138; then
+Expand(f,l,v) = <*>(the carrier of F); then
+Sum Expand(f,l,v) = 0.F by RLVECT_1:43;
+hence thesis by defK;
+end;
+
+theorem lemadd2a:
+for F being Field
+for U,V being VectSp of F
+for B being non empty finite Subset of U
+for f being Function of B,V
+for l being Linear_Combination of B holds Carrier(f (#) l) c= f .: (Carrier l)
+proof
+let F be Field, U,V be VectSp of F;
+let B be non empty finite Subset of U;
+let f be Function of B,V, l be Linear_Combination of B;
+now let o be object;
+  assume o in Carrier(f (#) l); then
+  consider v being Element of V such that
+  B1: o = v & (f (#) l).v <> 0.F;
+  set T = Expand(f,l,v);
+  now assume A3: f"{v} misses Carrier l;
+    set L = (len T |-> 0.F);
+    now let i be Nat;
+      assume 1 <= i <= len T; then
+      A6: i in dom T & i in Seg len T by FINSEQ_3:25; then
+      i in dom(canFS f"{v}) & (canFS f"{v}).i in dom l by FUNCT_1:11; then
+      A4: (canFS f"{v}).i in rng(canFS f"{v}) by FUNCT_1:3;
+      f"{v} c= B; then
+      A5: (canFS f"{v}).i in B by A4;
+      not (canFS f"{v}).i in Carrier l by A4,A3,XBOOLE_0:def 4;
+      then 0.F = l.((canFS f"{v}).i) by A5
+               .= T.i by A6,FUNCT_1:12;
+      hence T.i = L.i by A6, FINSEQ_2:57;
+      end; then
+    T=L by CARD_1:def 7;then
+    Sum T = 0.F by MATRIX_3:11;
+    hence contradiction by B1,defK;
+    end; then
+  consider y being object such that
+  A8: y in f"{v} and
+  A9: y in Carrier l by XBOOLE_0:3;
+  A10: y in dom f by A8,FUNCT_1:def 7;
+  A11: f.y in {v} by A8,FUNCT_1:def 7;
+  reconsider y as Element of B by A8;
+  f.y = v by A11,TARSKI:def 1;
+  hence o in f .: (Carrier l) by B1,A9,A10,FUNCT_1:def 6;
+  end;
+hence thesis;
+end;
+
+theorem lemadd2:
+for F being Field
+for U,V being VectSp of F
+for B being non empty finite Subset of U
+for b being Element of B
+for f being Function of B,V
+for l being Linear_Combination of B st Carrier l = {b}
+holds Carrier(f (#) l) = {f.b} & Sum(f (#) l) = l.b * f.b
+proof
+let F be Field, U,V be VectSp of F;
+let B be non empty finite Subset of U, b be Element of B;
+let f be Function of B,V, l being Linear_Combination of B;
+assume A: Carrier l = {b};
+H: dom f = B by FUNCT_2:def 1; then
+reconsider v = f.b as Element of (rng f) by FUNCT_1:3;
+F: b in Carrier l by A,TARSKI:def 1;
+set T = Expand(f,l,v);
+f.b in {v} by TARSKI:def 1; then
+b in f"{v} by H,FUNCT_1:def 7; then
+b in rng canFS(f"{v}) by FUNCT_2:def 3; then
+consider i being object such that
+E: i in dom canFS(f"{v}) & (canFS(f"{v})).i = b by FUNCT_1:def 3;
+reconsider i as Element of NAT by E;
+K: dom l = the carrier of U by FUNCT_2:def 1; then
+L: i in dom T by E,FUNCT_1:11;
+G: l.b = (l * (canFS(f"{v}))).i by E,FUNCT_1:13
+      .= T/.i by L,PARTFUN1:def 6;
+I: now let j be Element of NAT;
+   assume I1: j in dom T & j <> i; then
+   I2: j in dom canFS(f"{v}) & (canFS(f"{v})).j in dom l by FUNCT_1:11; then
+   (canFS(f"{v})).j <> b by E,I1,FUNCT_1:def 4; then
+   not (canFS(f"{v})).j in Carrier l by A,TARSKI:def 1;
+   hence 0.F = l.((canFS(f"{v})).j) by I2
+            .= (l * (canFS(f"{v}))).j by I2,FUNCT_1:13
+            .= T/.j by I1,PARTFUN1:def 6;
+   end;
+C: (f (#) l).v = Sum T by defK .= l.b by G,K,I,E,FUNCT_1:11,POLYNOM2:3;
+B: now let o be object;
+   assume o in {f.b}; then
+   B0: o = v by TARSKI:def 1;
+   (f (#) l).v <> 0.F by C,F,VECTSP_6:2;
+   hence o in Carrier(f (#) l) by B0;
+   end;
+D: now let o be object;
+   assume o in Carrier(f (#) l); then
+   consider v being Element of V such that
+   B0: o = v & (f (#) l).v <> 0.F;
+   B1: f .: {b} = Im(f,b) .= {f.b} by H,FUNCT_1:59;
+   B2: Carrier(f (#) l) c= f .: {b} by A,lemadd2a;
+   now assume v <> f.b;
+    then not v in Carrier(f (#) l) by B2,B1,TARSKI:def 1;
+     hence contradiction by B0;
+     end;
+   hence o in {f.b} by B0,TARSKI:def 1;
+   end;
+hence Carrier(f (#) l) = {f.b} by B,TARSKI:2;
+thus Sum(f (#) l) = l.b * f.b by D,C,B,TARSKI:2,VECTSP_6:20;
+end;
+
+theorem lemaddx:
+for F being Field
+for U,V being VectSp of F
+for B being non empty finite Subset of U
+for f being Function of B,V
+for l1,l2,l3 being Linear_Combination of B
+st l3 = l1 + l2 holds (f (#) l3) = (f (#) l1) + (f (#) l2)
+proof
+let F be Field, U,V be VectSp of F, B be non empty finite Subset of U;
+let f be Function of B,V; let l1,l2,l3 be Linear_Combination of B;
+assume AS: l3 = l1 + l2;
+U: dom l1 = the carrier of U & dom l2 = the carrier of U &
+   dom l3 = the carrier of U by FUNCT_2:def 1;
+now let v be Element of V;
+  per cases;
+  suppose v in rng f; then
+
+consider x being object such that
+    C1: x in dom f & f.x = v by FUNCT_1:def 3;
+    reconsider u = x as Element of B by C1;
+    set T3 = Expand(f,l3,v), T1 = Expand(f,l1,v), T2 = Expand(f,l2,v);
+
+    V: len(canFS f"{v}) = card(f"{v}) by FINSEQ_1:93;
+    rng(canFS f"{v}) = f"{v} & f"{v} c= B &
+      B c= the carrier of U by FUNCT_2:def 3; then
+    W: rng(canFS f"{v}) c= dom l1 & rng(canFS f"{v}) c= dom l2 &
+       rng(canFS f"{v}) c= dom l3 by U; then
+    K: len T1 = card(f"{v}) by V,FINSEQ_2:29
+             .= len T2 by V,W,FINSEQ_2:29;
+    KP:   len T1 = card(f"{v}) by W,V,FINSEQ_2:29
+             .= len T3 by V,W,FINSEQ_2:29;
+  E: now let i be Nat;
+       assume E0:i in dom T1; then
+       E1: i in dom(canFS f"{v}) by FUNCT_1:11; then
+       E2: (canFS f"{v}).i in rng(canFS f"{v}) by FUNCT_1:3;
+       rng(canFS f"{v}) = f"{v} & f"{v} c= B &
+         B c= the carrier of U by FUNCT_2:def 3;
+       then reconsider w = (canFS f"{v}).i as Element of U by E2;
+       E3: T1/.i = (l1 * (canFS f"{v})).i by E0,PARTFUN1:def 6
+                .= l1.w by E1,FUNCT_1:13;
+       w in dom l2 by U; then
+       i in dom(l2 * (canFS f"{v})) by E1,FUNCT_1:11; then
+       E4: T2/.i = (l2 * (canFS f"{v})).i by PARTFUN1:def 6
+                .= l2.w by E1,FUNCT_1:13;
+       thus T3.i = l3.((canFS f"{v}).i) by E1,FUNCT_1:13
+                .= T1/.i + T2/.i by E3,E4,AS,VECTSP_6:22;
+       end;
+    C: Sum T3 = Sum T1 + Sum T2 by E,K,KP,RLVECT_2:2;
+    thus (f (#) l3).v = Sum T3 by defK
+                     .= Sum T1 + (f (#) l2).v by C,defK
+                     .= (f (#) l1).v + (f (#) l2).v by defK
+                     .= ((f (#) l1) + (f (#) l2)).v by VECTSP_6:22;
+    end;
+  suppose C0: not v in rng f; then
+    (f (#) l1).v = 0.F by lemadd2b;
+    hence ((f (#) l1) + (f (#) l2)).v
+        = 0.F + (f (#) l2).v by VECTSP_6:22
+       .= 0.F by C0,lemadd2b
+       .= (f (#) l3).v by C0,lemadd2b;
+    end;
+  end;
+hence thesis by VECTSP_6:def 7;
+end;
+
+lemadd:
+for F being Field
+for U,V being VectSp of F
+for B being non empty finite Subset of U
+for f being Function of B,V
+for l1,l2,l3 being Linear_Combination of B st l3 = l1 + l2
+holds Sum(f (#) l3) = Sum(f (#) l1) + Sum(f (#) l2)
+proof
+let F be Field, U,V be VectSp of F, B be non empty finite Subset of U;
+let f be Function of B,V; let l1,l2,l3 be Linear_Combination of B;
+assume l3 = l1 + l2; then
+(f (#) l3) = (f (#) l1) + (f (#) l2) by lemaddx;
+hence Sum (f (#) l3) = Sum (f (#) l1) + Sum (f (#) l2) by VECTSP_6:44;
+end;
+
+theorem lemmultx:
+for F being Field
+for U,V being VectSp of F
+for B being non empty finite Subset of U
+for f being Function of B,V
+for l1,l2 being Linear_Combination of B
+for a being Element of F st l2 = a * l1 holds (f (#) l2) = a * (f (#) l1)
+proof
+let F be Field, U,V be VectSp of F, B be non empty finite Subset of U;
+let f be Function of B,V; let l1,l2 be Linear_Combination of B;
+let a be Element of F;
+assume AS: l2 = a * l1;
+U: dom l1 = the carrier of U & dom l2 = the carrier of U by FUNCT_2:def 1;
+now let v be Element of V;
+  per cases;
+  suppose v in rng f; then
+    consider x being object such that
+    C1: x in dom f & f.x = v by FUNCT_1:def 3;
+    reconsider u = x as Element of B by C1;
+    set T1 = Expand(f,l1,v), T2 = Expand(f,l2,v);
+KP: len (a*T1) = len T1 by MATRIXR1:16;
+
+ V: len(canFS f"{v}) = card(f"{v}) by FINSEQ_1:93;
+    rng(canFS f"{v}) = f"{v} & f"{v} c= B &
+      B c= the carrier of U by FUNCT_2:def 3; then
+    W: rng(canFS f"{v}) c= dom l1 & rng(canFS f"{v}) c= dom l2 by U; then
+    K: len T1 = card(f"{v}) by V,FINSEQ_2:29
+             .= len T2 by V,W,FINSEQ_2:29;
+
+    now let i be Nat;
+       assume 1 <= i <= len T2;then
+       E0:i in dom T2 & i in dom T1 & i in dom (a*T1)
+          by FINSEQ_3:25,K,KP;then
+       E1: i in dom(canFS f"{v}) by FUNCT_1:11; then
+       E2: (canFS f"{v}).i in rng(canFS f"{v}) by FUNCT_1:3;
+       rng(canFS f"{v}) = f"{v} & f"{v} c= B &
+         B c= the carrier of U by FUNCT_2:def 3;
+       then reconsider w = (canFS f"{v}).i as Element of U by E2;
+       E3: T1/.i = (l1 * (canFS f"{v})).i by E0,PARTFUN1:def 6
+                .= l1.w by E1,FUNCT_1:13;
+       E4:T1/.i = T1.i by E0,PARTFUN1:def 6;
+       thus T2.i = l2.((canFS f"{v}).i) by E1,FUNCT_1:13
+                .= a * T1/.i by E3,AS,VECTSP_6:def 9
+                .= (a*T1).i by E4,E0,FVSUM_1:50;
+       end; then
+ EE: T2 = a * T1 by K,MATRIXR1:16;
+    reconsider fl1 = f (#) l1 as Linear_Combination of V;
+    thus (f (#) l2).v = Sum T2 by defK
+           .= a * (Sum T1) by EE,BINOM:4
+           .= a * (fl1.v) by defK
+           .= (a * (f (#) l1)).v by VECTSP_6:def 9;
+     end;
+  suppose C0: not v in rng f;
+    hence (f (#) l2).v = a * 0.F by lemadd2b
+                      .= a * (f (#) l1).v by C0,lemadd2b
+                      .= (a * (f (#) l1)).v by VECTSP_6:def 9;
+    end;
+  end;
+hence thesis by VECTSP_6:def 7;
+end;
+
+lemmult:
+for F being Field
+for U,V being VectSp of F
+for B being non empty finite Subset of U
+for f being Function of B,V
+for l1,l2 being Linear_Combination of B
+for a being Element of F
+st a * l1 = l2 holds Sum(f (#) l2) = a * Sum(f (#) l1)
+proof
+let F be Field, U,V be VectSp of F, B be non empty finite Subset of U;
+let f be Function of B,V;
+let l1,l2 be Linear_Combination of B; let a be Element of F;
+assume l2 = a * l1; then
+(f (#) l2) = a * (f (#) l1) by lemmultx;
+hence Sum (f (#) l2) = a * Sum (f (#) l1) by VECTSP_6:45;
+end;
+
+theorem
+for F being Field
+for U,V being VectSp of F
+for B being non empty finite Subset of U
+for f being Function of B,V
+for l1,l2 being Linear_Combination of B
+st l2 = -l1 holds f (#) l2 = -(f (#) l1) by lemmultx;
+
+theorem lemminusx:
+for F being Field
+for U,V being VectSp of F
+for B being non empty finite Subset of U
+for f being Function of B,V
+for l1,l2,l3 being Linear_Combination of B
+st l3 = l1 - l2 holds f (#) l3 = (f (#) l1) - (f (#) l2)
+proof
+let F be Field, U,V be VectSp of F, B be non empty finite Subset of U;
+let f be Function of B,V; let l1,l2,l3 be Linear_Combination of B;
+assume A: l3 = l1 - l2;
+reconsider l4 = -l2 as Linear_Combination of B by VECTSP_6:39;
+B: - (f (#) l2) = f (#) l4 by lemmultx;
+thus f (#) l3 = (f (#) l1) - (f (#) l2) by A,B,lemaddx;
+end;
+
+lemminus:
+for F being Field
+for U,V being VectSp of F
+for B being non empty finite Subset of U
+for f being Function of B,V
+for l1,l2,l3 being Linear_Combination of B
+st l3 = l1 - l2 holds Sum(f (#) l3) = Sum(f (#) l1) - Sum(f (#) l2)
+proof
+let F be Field, U,V be VectSp of F, B be non empty finite Subset of U;
+let f be Function of B,V; let l1,l2,l3 be Linear_Combination of B;
+assume l3 = l1 - l2; then
+f (#) l3 = (f (#) l1) - (f (#) l2) by lemminusx;
+hence Sum(f (#) l3) = Sum(f (#) l1) - Sum(f (#) l2) by VECTSP_6:47;
+end;
+
+theorem lembas:
+for F being Field
+for U,V being VectSp of F
+for B being non empty finite Subset of U st B is linearly-independent
+for w being Element of U st w in B
+for l being Linear_Combination of B st Sum l = w
+for f being Function of B,V holds Sum(f (#) l) = f.w
+proof
+let F be Field, U,V be VectSp of F, B be non empty finite Subset of U;
+assume AS1: B is linearly-independent;
+let w be Element of U;
+assume AS2: w in B;
+let l be Linear_Combination of B;
+assume AS3: Sum l = w;
+let f be Function of B,V;
+set G = f (#) l;
+reconsider b = w as Element of B by AS2;
+I: Carrier l = { w } & l.w = 1.F by AS1,AS2,AS3,lembas1; then
+Sum(f (#) l) = l.b * f.b by lemadd2;
+hence thesis by I;
+end;
+
+definition
+let F be Field;
+let U be finite-dimensional VectSp of F;
+let V be VectSp of F;
+let B be Basis of U;
+let f be Function of B,V;
+func canLinTrans f -> linear-transformation of U,V means :defcl:
+  it|B = f;
+existence
+proof
+per cases;
+suppose AS: B = {};
+  deffunc F(object) = 0.V;
+  H2: for x be object st x in the carrier of U holds F(x) in the carrier of V;
+  consider T being Function of the carrier of U, the carrier of V such that
+  A: for u being object st u in the carrier of U holds T.u = F(u)
+     from FUNCT_2:sch 2(H2);
+  now let u1,u2 be Element of U;
+    thus T.u1 + T.u2 = 0.V + T.u2 by A .= 0.V + 0.V by A .= T.(u1+u2) by A;
+    end; then
+  B: T is additive by VECTSP_1:def 20;
+  now let a be Element of F, u be Element of U;
+    thus a * T.u = a * 0.V by A .= 0.V by VECTSP_1:14 .= T.(a*u) by A;
+    end; then
+  C: T is homogeneous by MOD_2:def 2;
+  B c= the carrier of U; then
+  B c= dom T by FUNCT_2:def 1; then
+  dom T /\ B = B by XBOOLE_1:28 .= dom f by FUNCT_2:def 1; then
+  T|B = f by AS;
+  hence thesis by B,C;
+  end;
+suppose H: B <> {}; then
+reconsider B1 = B as non empty finite Subset of U;
+reconsider f as Function of B1,V;
+B: Lin B = the ModuleStr of U by VECTSP_7:def 3;
+defpred P[object,object] means
+  for l being Linear_Combination of B1 st $1 = Sum l holds $2 = Sum(f (#) l);
+AA: now let x be object;
+    assume x in the carrier of U; then
+    reconsider u = x as Element of U;
+    u in the carrier of (Lin B) by B; then
+    u in the set of all Sum(l) where l is Linear_Combination of B
+      by VECTSP_7:def 2; then
+    consider l being Linear_Combination of B1 such that C1: u = Sum(l);
+    thus ex y being object st y in the carrier of V & P[x,y]
+      proof
+      take Sum(f (#) l);
+      thus thesis by C1,FIELD_7:6;
+      end;
+    end;
+consider T be Function of the carrier of U, the carrier of V such that
+A: for u being object st u in the carrier of U holds P[u,T.u]
+   from FUNCT_2:sch 1(AA);
+now let u1,u2 be Element of U;
+  u1 in the carrier of (Lin B) by B; then
+  u1 in the set of all Sum(l) where l is Linear_Combination of B
+    by VECTSP_7:def 2; then
+  consider l1 being Linear_Combination of B1 such that
+  C1: u1 = Sum(l1);
+  u2 in the carrier of (Lin B) by B; then
+  u2 in the set of all Sum(l) where l is Linear_Combination of B
+    by VECTSP_7:def 2; then
+  consider l2 being Linear_Combination of B1 such that
+  C2: u2 = Sum(l2);
+  reconsider l3 = l1 + l2 as Linear_Combination of B1 by VECTSP_6:24;
+  thus T.(u1) + T.(u2)
+    = Sum(f (#) l1) + T.(Sum l2) by A,C1,C2
+   .= Sum(f (#) l1) + Sum(f (#) l2) by A
+   .= Sum(f (#) l3) by lemadd
+   .= T.(Sum(l1+l2)) by A
+   .= T.(u1+u2) by C1,C2,VECTSP_6:44;
+  end; then
+C: T is additive by VECTSP_1:def 20;
+now let  a being Element of F, u be Element of U;
+  u in the carrier of (Lin B) by B; then
+  u in the set of all Sum(l) where l is Linear_Combination of B
+    by VECTSP_7:def 2; then
+  consider l being Linear_Combination of B1 such that
+  C1: u = Sum(l);
+  reconsider al = a * l as Linear_Combination of B1 by VECTSP_6:31;
+  thus a * T.(u)
+    = a * Sum(f (#) l) by A,C1
+   .= Sum(f (#) al) by lemmult
+   .= T.(Sum al) by A
+   .= T.(a*u) by C1,VECTSP_6:45;
+  end; then
+D: T is homogeneous by MOD_2:def 2;
+B c= the carrier of U; then
+B c= dom T by FUNCT_2:def 1; then
+E: dom T /\ B = B by XBOOLE_1:28 .= dom f by FUNCT_2:def 1;
+now let x be object;
+  assume x in dom f; then
+  reconsider w = x as Element of B;
+  w in B & B c= the carrier of U by H; then
+  w in the carrier of (Lin B) by B; then
+  w in the set of all Sum(l) where l is Linear_Combination of B
+    by VECTSP_7:def 2; then
+  consider l being Linear_Combination of B1 such that
+  C1: w = Sum(l);
+  thus T.x = Sum(f (#) l) by C1,A .= f.x by C1,lembas;
+  end; then
+T|B = f by E,FUNCT_1:46;
+hence thesis by C,D;
+end;
+end;
+uniqueness by canLinuni;
+end;
+
+theorem CLS:
+for F being Field
+for U being non trivial finite-dimensional VectSp of F
+for V being VectSp of F
+for B being Basis of U
+for f being Function of B,V
+for l being Linear_Combination of B
+holds (canLinTrans f).(Sum l) = Sum(f (#) l)
+proof
+let F be Field, U be non trivial finite-dimensional VectSp of F,
+    V be VectSp of F;
+let B be Basis of U, f be Function of B,V, l be Linear_Combination of B;
+set B1 = B;
+B: Lin B = the ModuleStr of U by VECTSP_7:def 3;
+defpred P[object,object] means
+  for l being Linear_Combination of B1 st $1 = Sum l holds $2 = Sum(f (#) l);
+AA: now let x be object;
+    assume x in the carrier of U; then
+    reconsider u = x as Element of U;
+    u in the carrier of (Lin B) by B; then
+    u in the set of all Sum(l) where l is Linear_Combination of B
+      by VECTSP_7:def 2; then
+    consider l being Linear_Combination of B1 such that C1: u = Sum(l);
+    thus ex y being object st y in the carrier of V & P[x,y]
+      proof
+      take Sum(f (#) l);
+      thus thesis by C1,FIELD_7:6;
+      end;
+    end;
+consider T be Function of the carrier of U, the carrier of V such that
+A: for u being object st u in the carrier of U holds P[u,T.u]
+   from FUNCT_2:sch 1(AA);
+C: now let u1,u2 be Element of U;
+   u1 in the carrier of (Lin B) by B; then
+   u1 in the set of all Sum(l) where l is Linear_Combination of B
+     by VECTSP_7:def 2; then
+   consider l1 being Linear_Combination of B1 such that
+   C1: u1 = Sum(l1);
+   u2 in the carrier of (Lin B) by B; then
+   u2 in the set of all Sum(l) where l is Linear_Combination of B
+     by VECTSP_7:def 2; then
+   consider l2 being Linear_Combination of B1 such that
+   C2: u2 = Sum(l2);
+   reconsider l3 = l1 + l2 as Linear_Combination of B1 by VECTSP_6:24;
+   thus T.(u1) + T.(u2)
+      = Sum(f (#) l1) + T.(Sum l2) by A,C1,C2
+     .= Sum(f (#) l1) + Sum(f (#) l2) by A
+     .= Sum(f (#) l3) by lemadd
+     .= T.(Sum(l1+l2)) by A
+     .= T.(u1+u2) by C1,C2,VECTSP_6:44;
+  end;
+now let  a being Element of F, u be Element of U;
+  u in the carrier of (Lin B) by B; then
+  u in the set of all Sum(l) where l is Linear_Combination of B
+    by VECTSP_7:def 2; then
+  consider l being Linear_Combination of B1 such that
+  C1: u = Sum(l);
+  reconsider al = a * l as Linear_Combination of B1 by VECTSP_6:31;
+  thus a * T.(u)
+    = a * Sum(f (#) l) by A,C1
+   .= Sum(f (#) al) by lemmult
+   .= T.(Sum al) by A
+   .= T.(a*u) by C1,VECTSP_6:45;
+  end; then
+reconsider T as linear-transformation of U,V by C,VECTSP_1:def 20,MOD_2:def 2;
+B c= the carrier of U; then
+B c= dom T by FUNCT_2:def 1; then
+E: dom T /\ B = B by XBOOLE_1:28 .= dom f by FUNCT_2:def 1;
+now let x be object;
+  assume x in dom f; then
+  reconsider w = x as Element of B;
+  w in the carrier of (Lin B) by B; then
+  w in the set of all Sum(l) where l is Linear_Combination of B
+    by VECTSP_7:def 2; then
+  consider l being Linear_Combination of B1 such that
+  C1: w = Sum(l);
+  thus T.x = Sum(f (#) l) by C1,A .= f.x by C1,lembas;
+  end; then
+T|B = f by E,FUNCT_1:46 .= (canLinTrans f)|B by defcl; then
+T = canLinTrans f by canLinuni;
+hence thesis by A;
+end;
+
+theorem
+for F being Field
+for U,V being finite-dimensional VectSp of F
+for B being Basis of U
+for f being Function of B,V
+for T being linear-transformation of U,V
+holds T = canLinTrans f iff
+      for u being Element of U st u in B holds T.u = f.u
+proof
+let F be Field, U,V be finite-dimensional VectSp of F;
+let B be Basis of U, f be Function of B,V, T be linear-transformation of U,V;
+H: dom f = B by FUNCT_2:def 1;
+A: now assume T = canLinTrans f; then
+   T|B = f by defcl;
+   hence for u being Element of U st u in B holds T.u = f.u by FUNCT_1:49;
+   end;
+now assume C: for u being Element of U st u in B holds T.u = f.u;
+  D: now let x be object;
+     assume x in dom f; then
+     x in B;
+     hence f.x = T.x by C;
+     end;
+  dom T = the carrier of U & B c= the carrier of U by FUNCT_2:def 1; then
+  dom f = dom T /\ B by H,XBOOLE_1:28; then
+  T|B = f by D,FUNCT_1:46;
+  hence T = canLinTrans f by defcl;
+  end;
+hence thesis by A;
+end;
+
+theorem canlinsurj2:
+for F being Field
+for U,V being finite-dimensional VectSp of F
+for B being Basis of U
+for f being Function of B,V holds (canLinTrans f) .: B c= rng f
+proof
+let F be Field, U,V be finite-dimensional VectSp of F;
+let B be Basis of U, f be Function of B,V;
+set T = canLinTrans f;
+now let o be object;
+  assume o in (canLinTrans f) .: B; then
+  consider x being object such that
+  A: x in dom T & x in B & o = T.x by FUNCT_1:def 6;
+  B: dom f = B by FUNCT_2:def 1;
+  f.x = (T|B).x by defcl .= T.x by A,FUNCT_1:49;
+  hence o in rng f by A,B,FUNCT_1:3;
+  end;
+hence thesis;
+end;
+
+theorem canlinsurj3:
+for F being Field
+for U being non trivial finite-dimensional VectSp of F
+for V being finite-dimensional VectSp of F
+for B being Basis of U
+for f being Function of B,V
+for l2 being Linear_Combination of (rng f)
+ex l1 being Linear_Combination of B st (canLinTrans f).(Sum l1) = Sum l2
+proof
+let F be Field, U be non trivial finite-dimensional VectSp of F;
+let V be finite-dimensional VectSp of F, B be Basis of U;
+let f be Function of B,V, l2 be Linear_Combination of (rng f);
+set T = canLinTrans f;
+defpred P[Nat] means
+  for l2 being Linear_Combination of (rng f) st card(Carrier l2) = $1
+  ex l1 being Linear_Combination of B st (canLinTrans f).(Sum l1) = Sum l2;
+IA: P[0]
+    proof
+    now let l2 be Linear_Combination of (rng f);
+    assume card(Carrier l2) = 0;
+    then Carrier l2 = {};
+    then l2 = ZeroLC(V) by VECTSP_6:def 3;
+    then A3: Sum l2 = 0.V by VECTSP_6:15;
+    Carrier ZeroLC(U) c= B by VECTSP_6:def 3; then
+    reconsider l1 = ZeroLC(U) as Linear_Combination of B by VECTSP_6:def 4;
+    Sum l1 = 0.U by VECTSP_6:15; then
+    T.(Sum l1) = Sum l2 by A3,RANKNULL:9;
+    hence ex l1 being Linear_Combination of B st T.(Sum l1) = Sum l2;
+    end;
+    hence thesis;
+    end;
+I1: P[1]
+    proof
+    now let l2 be Linear_Combination of (rng f);
+    assume card(Carrier l2) = 1;
+    then consider v being object such that
+    A2: Carrier l2 = { v } by CARD_2:42;
+    A3: Carrier l2 c= rng f & v in Carrier l2
+        by A2,TARSKI:def 1,VECTSP_6:def 4;
+    then reconsider v as Element of V;
+    consider u being object such that
+    A4: u in dom f & f.u = v by A3,FUNCT_1:def 3;
+    reconsider u as Element of B by A4;
+    A5: T.u = (T|B).u by FUNCT_1:49.= f.u by defcl;
+    defpred Q[object,object] means
+           ($1 = u & $2 = l2.(f.u)) or ($1 <> u & $2 = 0.F);
+      B4: for x being object st x in the carrier of U
+          ex y being object st y in the carrier of F & Q[x,y]
+         proof
+         let x be object;
+         assume x in the carrier of U;
+         per cases;
+         suppose x = u;
+           hence ex y being object st y in the carrier of F & Q[x,y];
+           end;
+         suppose x <> u;
+           hence ex y being object st y in the carrier of F & Q[x,y];
+           end;
+         end;
+      consider l1 being Function of the carrier of U,the carrier of F such that
+      B5: for x being object st x in the carrier of U holds Q[x,l1.x]
+          from FUNCT_2:sch 1(B4);
+      reconsider l1 as Element of Funcs(the carrier of U, the carrier of F)
+         by FUNCT_2:8;
+      H: {u} c= the carrier of U by TARSKI:def 3;
+      for v being Element of U st not v in {u} holds l1.v = 0.F
+        proof
+        let v be Element of U;
+        assume not v in {u};
+        then v <> u by TARSKI:def 1;
+        hence l1.v = 0.F by B5;
+        end; then
+      reconsider l1 as Linear_Combination of U by H,VECTSP_6:def 1;
+      now let o be object;
+        assume o in Carrier l1;
+        then consider w being Element of U such that
+        C1: o = w & l1.w <> 0.F;
+        Q[w,l1.w] by B5;
+        hence o in {u} by C1,TARSKI:def 1;
+        end; then
+      B6: Carrier(l1) c= {u};
+      now let o be object;
+          assume o in Carrier l1;
+          then o = u by B6,TARSKI:def 1;
+          hence o in B;
+          end; then
+      Carrier(l1) c= B; then
+      reconsider l1 as Linear_Combination of B by VECTSP_6:def 4;
+      Carrier l1 = {u}
+          proof
+          now let o be object;
+            assume o in {u}; then
+            H: o = u by TARSKI:def 1;
+            B9: l1.u = l2.v by A4,B5;
+            v in Carrier l2 by A2,TARSKI:def 1; then
+            l2.v <> 0.F by VECTSP_6:2;
+            hence o in Carrier l1 by H,B9;
+            end;
+          then {u} c= Carrier l1;
+          hence thesis by B6;
+          end; then
+    T.(Sum l1) = T.(l1.u * u) by VECTSP_6:20
+              .= l1.u * T.u by MOD_2:def 2
+              .= l2.v * f.u by A5,B5,A4
+              .= Sum l2 by A4,A2,VECTSP_6:20;
+    hence ex l1 being Linear_Combination of B st T.(Sum l1) = Sum l2;
+    end;
+    hence thesis;
+    end;
+IS: now let k be Nat;
+    assume IV: P[k];
+    now let l2 be Linear_Combination of (rng f);
+      assume B1: card(Carrier l2) = k + 1; then
+      Carrier l2 <> {}; then
+      consider o being object such that
+      B2: o in Carrier l2 by XBOOLE_0:def 1;
+      consider v being Element of V such that
+      B3: o = v & l2.v <> 0.F by B2;
+      defpred Q[object,object] means
+           ($1 = v & $2 = l2.v) or ($1 <> v & $2 = 0.F);
+      B4: for x being object st x in the carrier of V
+          ex y being object st y in the carrier of F & Q[x,y]
+         proof
+         let x be object;
+         assume x in the carrier of V;
+         per cases;
+         suppose x = v;
+           hence ex y being object st y in the carrier of F & Q[x,y];
+           end;
+         suppose x <> v;
+           hence ex y being object st y in the carrier of F & Q[x,y];
+           end;
+         end;
+      consider l3 being Function of the carrier of V,the carrier of F such that
+      B5: for x being object st x in the carrier of V holds Q[x,l3.x]
+          from FUNCT_2:sch 1(B4);
+      reconsider l3 as Element of Funcs(the carrier of V, the carrier of F)
+         by FUNCT_2:8;
+      for w being Element of V st not w in {v} holds l3.w = 0.F
+        proof
+        let w be Element of V;
+        assume not w in {v};
+        then v <> w by TARSKI:def 1;
+        hence l3.w = 0.F by B5;
+        end; then
+      reconsider l3 as Linear_Combination of V by VECTSP_6:def 1;
+      now let o be object;
+        assume o in Carrier l3;
+        then consider w being Element of V such that
+        C1: o = w & l3.w <> 0.F;
+        w = v by C1,B5;
+        hence o in {v} by C1,TARSKI:def 1;
+        end; then
+      B6: Carrier(l3) c= {v};
+      now let o be object;
+          assume o in Carrier l3; then
+          o = v by B6,TARSKI:def 1; then
+          C1: o in Carrier l2 by B3;
+          Carrier l2 c= rng f by VECTSP_6:def 4;
+          hence o in rng f by C1;
+          end; then
+      Carrier(l3) c= rng f; then
+      reconsider l3 as Linear_Combination of rng f by VECTSP_6:def 4;
+      B8: Carrier l3 = {v}
+          proof
+          now let o be object;
+            assume C1: o in {v};
+            then o = v by TARSKI:def 1;
+            then l3.o <> 0.F by B5,B3;
+            hence o in Carrier l3 by C1;
+            end;
+          then {v} c= Carrier l3;
+          hence thesis by B6;
+          end;
+      reconsider l4 = l2 - l3 as Linear_Combination of rng f by VECTSP_6:42;
+      C0: l4 + l3 = l2 + (-l3 + l3) by VECTSP_6:26
+                 .= l2 + (l3 - l3) by VECTSP_6:25
+                 .= l2 + ZeroLC(V) by VECTSP_6:43
+                 .= l2 by VECTSP_6:27;
+      C1: Carrier l4 = (Carrier l2) \ (Carrier l3)
+          proof
+          C4: now let o be object;
+              assume o in Carrier l4;
+              then consider w being Element of V such that
+              C5: o = w & l4.w <> 0.F;
+              C6: now assume C7: v = w;
+                  l4.w = l2.w - l3.w by VECTSP_6:40
+                      .= l2.w - l2.w by B5,C7;
+                  hence contradiction by C5,RLVECT_1:15;
+                  end; then
+              C7: not w in Carrier(l3) by B8,TARSKI:def 1;
+              l4.w = l2.w - l3.w by VECTSP_6:40
+                  .= l2.w - 0.F by C6,B5; then
+              w in Carrier l2 by C5;
+              hence o in Carrier(l2) \ Carrier(l3) by C5,C7,XBOOLE_0:def 5;
+              end;
+         now let o be object;
+           assume o in Carrier(l2) \ Carrier(l3); then
+           C5: o in Carrier(l2) & not o in Carrier(l3) by XBOOLE_0:def 5; then
+           consider w being Element of V such that
+           C6: o = w & l2.w <> 0.F;
+           l4.w = l2.w - l3.w by VECTSP_6:40
+               .= l2.w - 0.F by C6,C5;
+           hence o in Carrier l4 by C6;
+           end;
+         hence thesis by C4,TARSKI:2;
+         end;
+      now let o be object;
+        assume o in Carrier l3; then
+        C4: o = v by B8,TARSKI:def 1;
+        v in Carrier(l3) by B8,TARSKI:def 1; then
+        C5: l3.v <> 0.F by VECTSP_6:2;
+        l2.v = l3.v by B5;
+        hence o in Carrier l2 by C4,C5;
+        end; then
+      Carrier l3 c= Carrier l2; then
+      card(Carrier(l2) \ Carrier(l3))
+         = card(Carrier l2) - card(Carrier l3) by CARD_2:44
+        .= (k + 1) - 1 by B1,B8,CARD_2:42; then
+      consider l5 being Linear_Combination of B such that
+      C2: T.(Sum l5) = Sum l4 by IV,C1;
+      card(Carrier l3) = 1 by B8,CARD_1:30; then
+      consider l6 being Linear_Combination of B such that
+      C3: T.(Sum l6) = Sum l3 by I1;
+      reconsider l1 = l5 + l6 as Linear_Combination of B by VECTSP_6:24;
+      Sum l1 = Sum l5 + Sum l6 by VECTSP_6:44; then
+      T.(Sum l1) = T.(Sum l5) + T.(Sum l6) by VECTSP_1:def 20
+                .= Sum l2 by C0,C2,C3,VECTSP_6:44;
+      hence ex l1 being Linear_Combination of B st T.(Sum l1) = Sum l2;
+      end;
+    hence P[k+1];
+    end;
+I: for k being Nat holds P[k] from NAT_1:sch 2(IA,IS);
+consider n being Nat such that H: card(Carrier l2) = n;
+thus thesis by H,I;
+end;
+
+theorem canlinsurj:
+for F being Field
+for U being non trivial finite-dimensional VectSp of F
+for V being finite-dimensional VectSp of F
+for B being Basis of U
+for f being Function of B,V holds im(canLinTrans f) = Lin(rng f)
+proof
+let F be Field, U be non trivial finite-dimensional VectSp of F;
+let V be finite-dimensional VectSp of F, B be Basis of U;
+let f be Function of B,V;
+set T = canLinTrans f;
+B: [#](im T) = T .: [#]U by RANKNULL:def 2;
+C: T .: [#]U is Subset of (im T) by RANKNULL:12;
+G: the carrier of Lin(rng f) = the set of all Sum l where
+                    l is Linear_Combination of (rng f) &
+   the carrier of Lin B = the set of all Sum l where
+                    l is Linear_Combination of B by VECTSP_7:def 2;
+H: Lin B = the ModuleStr of U by VECTSP_7:def 3;
+F: now let o be object;
+   assume o in the carrier of (im T); then
+   consider u being object such that
+   F1: u in dom T & u in [#]U & o = T.u by B,FUNCT_1:def 6;
+   reconsider u as Element of U by F1;
+   u in Lin B by H; then
+   consider l being Linear_Combination of B such that
+   F2: Sum l = u by G;
+   T .: B c= (rng f) by canlinsurj2;
+   then o in Lin(rng f) by F1,F2,canlinsurj1;
+   hence o in the carrier of Lin(rng f);
+   end;
+now let o be object;
+   assume o in the carrier of Lin(rng f); then
+   consider l2 being Linear_Combination of (rng f) such that
+   G1: o = Sum l2 by G;
+   consider l1 being Linear_Combination of B such that
+   G2: T.(Sum l1)  = Sum l2 by canlinsurj3;
+   dom T = the carrier of U by FUNCT_2:def 1; then
+   Sum l2 in T .: [#]U by G2,FUNCT_1:def 6;
+   hence o in the carrier of (im T) by G1,C;
+   end;
+hence thesis by F,TARSKI:2,VECTSP_4:29;
+end;
+
+XXX4a:
+for F being Field
+for U being non trivial finite-dimensional VectSp of F
+for V being finite-dimensional VectSp of F
+for B being Basis of U
+for f being Function of B,V st f is one-to-one
+for l being Linear_Combination of (rng f)
+holds (canLinTrans f).(Sum(l (#) f)) = Sum l
+proof
+let F be Field, U be non trivial finite-dimensional VectSp of F,
+    V be finite-dimensional VectSp of F;
+let B be Basis of U, f be Function of B,V;
+assume AS: f is one-to-one;
+let l be Linear_Combination of (rng f);
+(canLinTrans f).Sum(l (#) f) = Sum(f (#) (l (#) f)) by CLS;
+hence thesis by AS,XXX4;
+end;
+
+canLininjrngA:
+for F being Field
+for U being non trivial finite-dimensional VectSp of F
+for V being finite-dimensional VectSp of F
+for B being Basis of U
+for f being Function of B,V
+holds canLinTrans f is one-to-one implies (rng f) is linearly-independent
+proof
+let F be Field, U be non trivial finite-dimensional VectSp of F,
+    V be finite-dimensional VectSp of F;
+let B be Basis of U, f be Function of B,V;
+set T = canLinTrans f;
+assume A0: T is one-to-one;
+   f = T|B by defcl; then
+   A1: f is one-to-one by A0,FUNCT_1:52;
+   now let l2 be Linear_Combination of (rng f);
+     assume A2: Sum l2 = 0.V;
+     now assume A3: Carrier l2 <> {};
+       set o = the Element of Carrier l2;
+       o in Carrier l2 by A3; then
+       consider v being Element of V such that
+       A4: v = o & l2.v <> 0.F;
+       Carrier ZeroLC(U) = {} & {} c= B by VECTSP_6:def 3; then
+       reconsider l0 = ZeroLC(U) as Linear_Combination of B by VECTSP_6:def 4;
+       set l1 = l2 (#) f;
+       T.(Sum l1) = Sum l2 by A1,XXX4a
+                 .= T.(0.U) by A2,RANKNULL:9
+                 .= T.Sum(ZeroLC(U)) by VECTSP_6:15; then
+       Sum l1 = Sum ZeroLC(U) by A0,FUNCT_2:19; then
+       A6: l1 = l0 by FIELD_7:6;
+       Carrier l2 c= rng f by VECTSP_6:def 4; then
+       o in rng f by A3; then
+       consider x being object such that
+       A7: x in dom f & f.x = v by A4,FUNCT_1:def 3;
+       reconsider u = x as Element of B by A7;
+       l1.u <> 0.F by A4,A7,defK1; then
+       u in Carrier l1;
+       hence contradiction by A6,VECTSP_6:def 3;
+       end;
+     hence Carrier l2 = {};
+     end;
+hence (rng f) is linearly-independent by VECTSP_7:def 1;
+end;
+
+canLininjrngB:
+for F being Field
+for U being non trivial finite-dimensional VectSp of F
+for V being finite-dimensional VectSp of F
+for B being Basis of U
+for f being Function of B,V st f is one-to-one
+holds (rng f) is linearly-independent implies canLinTrans f is one-to-one
+proof
+let F be Field, U be non trivial finite-dimensional VectSp of F,
+    V be finite-dimensional VectSp of F;
+let B be Basis of U, f be Function of B,V;
+assume AS: f is one-to-one;
+set T = canLinTrans f;
+H0: the carrier of Lin B = the set of all Sum l where
+                    l is Linear_Combination of B by VECTSP_7:def 2;
+H1: Lin B = the ModuleStr of U by VECTSP_7:def 3;
+assume B0: (rng f) is linearly-independent;
+   now let x1,x2 be object;
+     assume B1: x1 in the carrier of U & x2 in the carrier of U & T.x1 = T.x2;
+     then reconsider v1 = x1, v2 = x2 as Element of U;
+     v1 in Lin B by H1; then
+     consider l1 being Linear_Combination of B such that
+     B2: Sum l1 = v1 by H0;
+     v2 in Lin B by H1; then
+     consider l2 being Linear_Combination of B such that
+     B3: Sum l2 = v2 by H0;
+     B4: v1 - v2 = Sum(l1 - l2) by B2,B3,VECTSP_6:47;
+     B5: T.(Sum l1 - Sum l2) = T.Sum(l1 - l2) by VECTSP_6:47
+                            .= T.v1 - T.v2 by B4,RANKNULL:8
+                            .= 0.V by B1,RLVECT_1:5;
+     reconsider l3 = l1 - l2 as Linear_Combination of B by VECTSP_6:42;
+     {} c= rng f & Carrier ZeroLC(V) = {} by VECTSP_6:def 3; then
+     B7: ZeroLC(V) is Linear_Combination of (rng f) by VECTSP_6:def 4;
+     T.(Sum l1 - Sum l2) = T.(Sum l1) - T.(Sum l2) by RANKNULL:8
+                        .= Sum(f (#) l1) - T.(Sum l2) by CLS
+                        .= Sum(f (#) l1) - Sum(f (#) l2) by CLS
+                        .= Sum(f (#) l3) by lemminus; then
+     B9: Sum(f (#) l3) = Sum ZeroLC(V) by B5,VECTSP_6:15;
+     now let u be Element of U;
+       assume u in Carrier(l1-l2); then
+       B12: (l1-l2).u <> 0.F by VECTSP_6:2; then
+       B13: ((f (#) l3) (#) f).u <> 0.F by AS,XXX3;
+       per cases;
+         suppose S: u in B; then
+           B10: (f (#) l3).(f.u) <> 0.F by B13,defK1;
+           dom f = B by FUNCT_2:def 1; then
+           f.u in rng f by S,FUNCT_1:3; then
+           f.u in Carrier(f (#) l3) by B10;
+           hence contradiction by B9,B7,B0,FIELD_7:6,VECTSP_6:def 3;
+           end;
+         suppose S: not u in B;
+           Carrier l1 c= B & Carrier l2 c= B by VECTSP_6:def 4; then
+           l1.u = 0.F & l2.u = 0.F by S,VECTSP_6:2; then
+           l1.u - l2.u = 0.F;
+           hence contradiction by B12,VECTSP_6:40;
+           end;
+         end; then
+     Carrier(l1-l2) is empty; then
+     l1 - l2 = ZeroLC(U) by VECTSP_6:def 3; then
+     --l2 = --l1 by VECTSP_6:37;
+     hence x1 = x2 by B2,B3;
+     end;
+hence T is one-to-one by FUNCT_2:19;
+end;
+
+theorem canLininj:
+for F being Field
+for U being non trivial finite-dimensional VectSp of F
+for V being finite-dimensional VectSp of F
+for B being Basis of U
+for f being Function of B,V
+holds canLinTrans f is one-to-one iff
+      (rng f is linearly-independent & f is one-to-one)
+proof
+let F be Field, U be non trivial finite-dimensional VectSp of F,
+    V be finite-dimensional VectSp of F;
+let B be Basis of U, f be Function of B,V;
+now assume A: canLinTrans f is one-to-one;
+  f = (canLinTrans f)|B by defcl;
+  hence rng f is linearly-independent &
+        f is one-to-one by A,FUNCT_1:52,canLininjrngA;
+  end;
+hence thesis by canLininjrngB;
+end;
+
+begin :: The Vector space R^n
+
+definition
+let R be Ring;
+let n be Nat;
+func vector_add(n,R) -> BinOp of n-tuples_on (the carrier of R) means :Defa:
+  for u,v being Tuple of n,(the carrier of R) holds it.(u,v) = u + v;
+existence
+proof
+defpred P[object,object,object] means
+  ex w,u,v being Element of n-tuples_on (the carrier of R)
+  st w = $3 & u = $1 & v = $2 & w = u + v;
+A0: for x,y being object
+    st x in n-tuples_on (the carrier of R) &
+       y in n-tuples_on (the carrier of R)
+    ex z being object
+    st z in n-tuples_on (the carrier of R) & P[x,y,z]
+    proof
+    let x,y be object;
+    assume x in n-tuples_on (the carrier of R) &
+           y in n-tuples_on (the carrier of R); then
+    reconsider u = x, v = y
+          as Tuple of n,(the carrier of R) by FINSEQ_2:131;
+    take z = u + v;
+    thus z in n-tuples_on (the carrier of R) by FINSEQ_2:131;
+    ex w1,u1,v1 being Element of n-tuples_on (the carrier of R)
+    st w1 = z & u1 = x & v1 = y & w1 = u1 + v1
+     proof
+     reconsider w = z, u, v as Element of n-tuples_on (the carrier of R)
+        by FINSEQ_2:131;
+     take w,u,v;
+     thus thesis;
+     end;
+  hence P[x,y,z];
+  end;
+consider f being Function of
+    [:n-tuples_on (the carrier of R),n-tuples_on (the carrier of R):],
+      n-tuples_on (the carrier of R) such that
+A1: for x,y being object
+    st x in n-tuples_on (the carrier of R) &
+       y in n-tuples_on (the carrier of R) holds P[x,y,f.(x,y)]
+    from BINOP_1:sch 1(A0);
+take f;
+now let u,v be Tuple of n,(the carrier of R);
+  u in n-tuples_on (the carrier of R) & v in n-tuples_on (the carrier of R)
+    by FINSEQ_2:131;
+  then P[u,v,f.(u,v)] by A1;
+  hence f.(u,v) = u + v;
+  end;
+hence thesis;
+end;
+uniqueness
+proof
+let w1,w2 be BinOp of n-tuples_on (the carrier of R) such that
+A1: for u,v being Tuple of n,(the carrier of R) holds w1.(u,v) = u + v and
+A2: for u,v being Tuple of n,(the carrier of R) holds w2.(u,v) = u + v;
+now let o be object;
+  assume o in [:n-tuples_on (the carrier of R),
+                n-tuples_on (the carrier of R):]; then
+  consider u,v being object such that
+  A3: u in n-tuples_on (the carrier of R) &
+      v in n-tuples_on (the carrier of R) & o = [u,v] by ZFMISC_1:def 2;
+  reconsider u,v as Tuple of n,(the carrier of R) by A3,FINSEQ_2:131;
+  w1.(u,v) = u + v by A1 .= w2.(u,v) by A2;
+  hence w1.o = w2.o by A3;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+func vector_mult(n,R) -> Function of
+      [: the carrier of R, n-tuples_on (the carrier of R) :],
+                                    n-tuples_on (the carrier of R) means :Defm:
+  for a being Element of R
+  for u being Tuple of n,(the carrier of R) holds it.(a,u) = a * u;
+existence
+proof
+defpred P[object,object,object] means
+  ex a being Element of R, w,u being Element of n-tuples_on (the carrier of R)
+  st w = $3 & u = $2 & a = $1 & w = a * u;
+A0: for a,x being object
+    st a in the carrier of R & x in n-tuples_on (the carrier of R)
+    ex z being object
+    st z in n-tuples_on (the carrier of R) & P[a,x,z]
+    proof
+    let a1,x be object;
+    assume AS: a1 in the carrier of R &
+               x in n-tuples_on (the carrier of R); then
+    reconsider u = x as Tuple of n,(the carrier of R) by FINSEQ_2:131;
+    reconsider a = a1 as Element of R by AS;
+    take z = a * u;
+    thus z in n-tuples_on (the carrier of R) by FINSEQ_2:131;
+    ex a1 being Element of R,
+       w1,u1 being Element of n-tuples_on (the carrier of R)
+    st w1 = z & u1 = x & a1 = a & w1 = a1 * u1
+     proof
+     reconsider w = z, u as Element of n-tuples_on (the carrier of R)
+        by FINSEQ_2:131;
+     take a,w,u;
+     thus thesis;
+     end;
+  hence P[a1,x,z];
+  end;
+consider f being Function of
+    [:the carrier of R,n-tuples_on (the carrier of R):],
+      n-tuples_on (the carrier of R) such that
+A1: for x,y being object
+    st x in the carrier of R &
+       y in n-tuples_on (the carrier of R) holds P[x,y,f.(x,y)]
+    from BINOP_1:sch 1(A0);
+take f;
+now let a be Element of R, u be Tuple of n,(the carrier of R);
+  P[a,u,f.(a,u)] by A1,FINSEQ_2:131;
+  hence f.(a,u) = a * u;
+  end;
+hence thesis;
+end;
+uniqueness
+proof
+let w1,w2 be Function of
+      [: the carrier of R, n-tuples_on (the carrier of R) :],
+                                    n-tuples_on (the carrier of R) such that
+A1: for a being Element of R
+    for u being Tuple of n,(the carrier of R) holds w1.(a,u) = a * u and
+A2: for a being Element of R
+     for u being Tuple of n,(the carrier of R) holds w2.(a,u) = a * u;
+now let o be object;
+  assume o in [:the carrier of R,
+                n-tuples_on (the carrier of R):]; then
+  consider a,u being object such that
+  A3: a in the carrier of R &
+      u in n-tuples_on (the carrier of R) & o = [a,u] by ZFMISC_1:def 2;
+  reconsider a as Element of R by A3;
+  reconsider u as Tuple of n,(the carrier of R) by A3,FINSEQ_2:131;
+  w1.(a,u) = a * u by A1 .= w2.(a,u) by A2;
+  hence w1.o = w2.o by A3;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+end;
+
+definition
+let R be Ring;
+let n be Nat;
+func R^*n -> strict ModuleStr over R means :DEF:
+  the carrier of it = n-tuples_on (the carrier of R) &
+  the addF of it = vector_add(n,R) &
+  the ZeroF of it = n |-> (0.R) &
+  the lmult of it = vector_mult(n,R);
+existence
+proof
+take ModuleStr (# n-tuples_on (the carrier of R),
+         vector_add(n,R),n |-> (0.R),vector_mult(n,R) #);
+thus thesis;
+end;
+uniqueness;
+end;
+
+registration
+let R be Ring;
+let n be Nat;
+cluster R^*n -> non empty;
+coherence
+proof
+the carrier of R^*n = n-tuples_on (the carrier of R) by DEF;
+hence thesis;
+end;
+end;
+
+registration
+let R be Ring;
+let n be Nat;
+cluster R^*n -> Abelian add-associative right_zeroed right_complementable;
+coherence
+proof
+set V = R^*n;
+now let x,y be Element of the carrier of V;
+  reconsider u=x, v=y as Element of n-tuples_on (the carrier of R) by DEF;
+  thus x+y = vector_add(n,R).(u,v) by DEF .= u + v by Defa
+          .= v + u by Lm1
+          .= vector_add(n,R).(v,u) by Defa
+          .= y+x by DEF;
+  end;
+hence V is Abelian by RLVECT_1:def 2;
+now let x,y,z be Element of the carrier of V;
+  reconsider u=x, v=y, w=z as Element of n-tuples_on (the carrier of R) by DEF;
+  H: y + z = vector_add(n,R).(v,w) by DEF .= v + w by Defa;
+  x + y = vector_add(n,R).(u,v) by DEF .= u + v by Defa;
+  hence (x+y)+z = vector_add(n,R).(u+v,w) by DEF
+               .= (u+v)+w by Defa
+               .= u+(v+w) by Lm2
+               .= vector_add(n,R).(u,v+w) by Defa
+               .= x+(y+z) by H,DEF;
+  end;
+hence V is add-associative by RLVECT_1:def 3;
+now let x be Element of the carrier of V;
+  reconsider u = x as Element of n-tuples_on (the carrier of R) by DEF;
+  H: 0.V = n |-> (0.R) by DEF;
+  thus x + 0.V = vector_add(n,R).(u,0.V) by DEF
+              .= u + (n |-> (0.R)) by H,Defa
+              .= x by FVSUM_1:21;
+  end;
+hence V is right_zeroed by RLVECT_1:def 4;
+now let x be Element of V;
+  reconsider u = x as Element of n-tuples_on (the carrier of R) by DEF;
+  reconsider y = -u as Element of V by DEF;
+  x + y = vector_add(n,R).(u,-u) by DEF
+       .= u + -u by Defa .= n |-> (0.R) by FVSUM_1:26
+       .= 0.V by DEF;
+  hence x is right_complementable by ALGSTR_0:def 11;
+  end;
+hence thesis by ALGSTR_0:def 16;
+end;
+end;
+
+registration
+let R be Ring;
+let n be Nat;
+cluster R^*n -> scalar-distributive scalar-associative vector-distributive;
+coherence
+proof
+set V = R^*n;
+now let a,b be Element of R, x be Vector of V;
+  reconsider u=x as Element of n-tuples_on (the carrier of R) by DEF;
+  H1: a * x = (the lmult of V).(a,u) by VECTSP_1:def 12
+           .= vector_mult(n,R).(a,u) by DEF
+           .= a * u by Defm;
+  H2: b * x = (the lmult of V).(b,u) by VECTSP_1:def 12
+           .= vector_mult(n,R).(b,u) by DEF
+           .= b * u by Defm;
+  thus (a + b) * x = (the lmult of V).(a+b,u) by VECTSP_1:def 12
+               .= vector_mult(n,R).(a+b,u) by DEF
+               .= (a + b) * u by Defm
+               .= a * u + b * u by FVSUM_1:55
+               .= vector_add(n,R).(a*u,b*u) by Defa
+               .= a * x + b * x by H1,H2,DEF;
+  end;
+hence V is scalar-distributive by VECTSP_1:def 15;
+now let a,b be Element of R, x be Vector of V;
+  reconsider u=x as Element of n-tuples_on (the carrier of R) by DEF;
+  H: b * x = (the lmult of V).(b,u) by VECTSP_1:def 12
+          .= vector_mult(n,R).(b,u) by DEF
+          .= b * u by Defm;
+  thus (a * b) * x = (the lmult of V).(a*b,u) by VECTSP_1:def 12
+               .= vector_mult(n,R).(a*b,u) by DEF
+               .= (a * b) * u by Defm
+               .= a * (b * u) by FVSUM_1:54
+               .= vector_mult(n,R).(a,b*u) by Defm
+               .= (the lmult of V).(a,b*u) by DEF
+               .= a * (b * x) by H,VECTSP_1:def 12;
+  end;
+hence V is scalar-associative by VECTSP_1:def 16;
+now let a be Element of R, x,y be Vector of V;
+  reconsider u=x, v = y as Element of n-tuples_on (the carrier of R) by DEF;
+  H1: a * x = (the lmult of V).(a,u) by VECTSP_1:def 12
+           .= vector_mult(n,R).(a,u) by DEF
+           .= a * u by Defm;
+  H2: a * y = (the lmult of V).(a,v) by VECTSP_1:def 12
+           .= vector_mult(n,R).(a,v) by DEF
+           .= a * v by Defm;
+  x + y = vector_add(n,R).(u,v) by DEF .= u + v by Defa;
+  hence a * (x + y) = (the lmult of V).(a,u+v) by VECTSP_1:def 12
+               .= vector_mult(n,R).(a,u+v) by DEF
+               .= a * (u + v) by Defm
+               .= a * u + a * v by FVSUM_1:56
+               .= vector_add(n,R).(a*u,a*v) by Defa
+               .= a * x + a * y by H1,H2,DEF;
+  end;
+hence V is vector-distributive by VECTSP_1:def 14;
+end;
+end;
+
+registration
+let R be Ring;
+let n be Nat;
+cluster R^*n -> scalar-unital;
+coherence
+proof
+set V = R^*n;
+now let x be Vector of V;
+  reconsider u=x as Element of n-tuples_on (the carrier of R) by DEF;
+  thus (1.R) * x = (the lmult of V).(1.R,u) by VECTSP_1:def 12
+                .= vector_mult(n,R).(1.R,u) by DEF
+                .= (1.R) * u by Defm
+                .= x by FVSUM_1:57;
+  end;
+hence V is scalar-unital by VECTSP_1:def 17;
+end;
+end;
+
+definition
+let R be Ring;
+let n,i be Nat;
+func i_th_unit_vector(n,R) -> Element of n-tuples_on (the carrier of R) equals
+  Replace(n |-> 0.R, i, 1.R);
+coherence
+proof
+n is Element of NAT by ORDINAL1:def 12;
+A: n = len(n |-> 0.R) by FINSEQ_2:132
+    .= len Replace(n |-> 0.R,i,1.R) by FINSEQ_7:5;
+reconsider u = Replace(n |-> 0.R,i,1.R) as Element of (the carrier of R)*
+   by FINSEQ_1:def 11;
+u in {s where s is Element of (the carrier of R)*: len s = n} by A;
+hence thesis by FINSEQ_2:def 4;
+end;
+end;
+
+theorem u1:
+for R being Ring
+for n,i being Nat st 1 <= i & i <= n holds
+i_th_unit_vector(n,R).i = 1.R &
+for j being Nat st 1 <= j & j <= n & j <> i holds i_th_unit_vector(n,R).j = 0.R
+proof
+let R be Ring, n,i be Nat;
+set v = i_th_unit_vector(n,R);
+assume AS: 1 <= i & i <= n;
+A: 1 <= i & i <= len(n |-> 0.R) by AS,FINSEQ_2:132;
+D: dom v = Seg n by FINSEQ_2:124;
+hence v.i = v/.i by AS,FINSEQ_1:1,PARTFUN1:def 6 .= 1.R by A,FINSEQ_7:8;
+now let j be Nat;
+assume C: 1 <= j & j <= n & j <> i;
+  B: 1 <= j & j <= len(n |-> 0.R) by C,FINSEQ_2:132;
+  E: dom(n |-> 0.R) = Seg n by FINSEQ_2:124;
+  thus v.j = v/.j by D,C,FINSEQ_1:1,PARTFUN1:def 6
+          .= (n |-> 0.R)/.j by C,B,FINSEQ_7:10
+          .= (n |-> 0.R).j by E,C,FINSEQ_1:1,PARTFUN1:def 6
+          .= (Seg n --> 0.R).j by FINSEQ_2:def 2
+          .= 0.R by C,FINSEQ_1:1,FUNCOP_1:7;
+  end;
+hence thesis;
+end;
+
+theorem u2:
+for R being non degenerated Ring, n,i,j being Nat
+st 1 <= i & i <= n & 1 <= j & j <= n
+holds i_th_unit_vector(n,R) = j_th_unit_vector(n,R) iff i = j
+proof
+let R be non degenerated Ring, n,i,j be Nat;
+assume AS: 1 <= i & i <= n & 1 <= j & j <= n;
+now assume A: i_th_unit_vector(n,R) = j_th_unit_vector(n,R);
+  now assume i <> j; then
+    0.R = j_th_unit_vector(n,R).j by A,AS,u1;
+    hence contradiction by AS,u1;
+    end;
+  hence i = j;
+  end;
+hence thesis;
+end;
+
+definition
+let R be Ring;
+let n be Nat;
+func Base(R,n) -> Subset of R^*n equals
+  { i_th_unit_vector(n,R) where i is Nat : 1 <= i & i <= n };
+coherence
+proof
+now let o be object;
+  assume o in {i_th_unit_vector(n,R) where i is Nat : 1 <= i & i <= n}; then
+  consider i being Nat such that
+  A: o = i_th_unit_vector(n,R) & 1 <= i & i <= n;
+  the carrier of R^*n = n-tuples_on (the carrier of R) by DEF;
+  hence o in the carrier of R^*n by A;
+  end;
+hence thesis by TARSKI:def 3;
+end;
+end;
+
+registration
+let R be Ring;
+let n be Nat;
+cluster Base(R,n) -> finite;
+coherence
+proof
+reconsider n as Element of NAT by ORDINAL1:def 12;
+deffunc F(Nat) = ($1)_th_unit_vector(n,R);
+defpred P[Nat] means 1 <= $1 & $1 <= n;
+D: {F(i) where i is Nat: i <= n & P[i]} is finite from FINSEQ_1:sch 6;
+E: now let o be object;
+   assume o in {F(i) where i is Nat: i <= n & P[i]};
+   then consider i being Nat such that
+   F: o = i_th_unit_vector(n,R) & i <= n & 1 <= i & i <= n;
+   thus o in Base(R,n) by F;
+   end;
+now let o be object;
+   assume o in Base(R,n);
+   then consider i being Nat such that
+   F: o = i_th_unit_vector(n,R) & 1 <= i & i <= n;
+   thus o in {F(i) where i is Nat: i <= n & P[i]} by F;
+   end;
+hence thesis by D,E,TARSKI:2;
+end;
+end;
+
+theorem cardB:
+for R being non degenerated Ring, n being Nat holds card Base(R,n) = n
+proof
+let R be non degenerated Ring, n be Nat;
+defpred P[object,object] means
+  ex x being Nat st $1 = x & $2 = x_th_unit_vector(n,R);
+B1: for x,y1,y2 being object st x in Seg n & P[x,y1] & P[x,y2] holds y1 = y2;
+B2: now let x be object;
+    assume x in Seg n;
+    then reconsider k = x as Nat;
+    thus ex y being object st P[x,y]
+      proof
+      take k_th_unit_vector(n,R);
+      thus thesis;
+      end;
+    end;
+consider f being Function such that
+C: dom f = Seg n &
+   for x being object st x in Seg n holds P[x,f.x] from FUNCT_1:sch 2(B1,B2);
+A1: now let o be object;
+    assume o in Base(R,n);
+    then consider i being Nat such that
+    A2: o = i_th_unit_vector(n,R) & 1 <= i & i <= n;
+    A4: i in Seg n by A2;
+    P[i,f.i] by C,FINSEQ_1:1,A2;
+    hence o in rng f by A4,C,A2,FUNCT_1:def 3;
+    end;
+now let o be object;
+    assume o in rng f;
+    then consider u being object such that
+    A2: u in dom f & o = f.u by FUNCT_1:def 3;
+    reconsider j = u as Element of NAT by A2,C;
+    P[u,f.u] by C,A2; then
+    consider i being Element of Seg n such that
+    A3: u = i & f.u = j_th_unit_vector(n,R) by C,A2;
+    1 <= j & j <= n by A2,C,FINSEQ_1:1;
+    hence o in Base(R,n) by A2,A3;
+    end;
+then A: rng f = Base(R,n) by A1,TARSKI:2;
+now assume not f is one-to-one;
+  then consider x1,x2 being object such that
+  A1: x1 in dom f & x2 in dom f & f.x1 = f.x2 & x1 <> x2;
+  reconsider j1 = x1, j2 = x2 as Element of NAT by A1,C;
+  P[x1,f.x1] by C,A1; then
+  consider i1 being Element of Seg n such that
+  A2: i1 = x1 & f.x1 = j1_th_unit_vector(n,R) by C,A1;
+  P[x2,f.x2] by C,A1; then
+  consider i2 being Element of Seg n such that
+  A3: i2 = x2 & f.x2 = j2_th_unit_vector(n,R) by C,A1;
+  1 <= j1 & j1 <= n & 1 <= j2 & j2 <= n by A1,C,FINSEQ_1:1;
+  hence contradiction by u2,A1,A2,A3;
+  end;
+then card Base(R,n) = card(Seg n) by A,C,CARD_1:70 .= n by FINSEQ_1:57;
+hence thesis;
+end;
+
+lemBB:
+for R being Ring, n being Nat
+for u being Element of R^*n,
+    v being Element of n-tuples_on (the carrier of R)
+for a being Element of R st u = v holds a * u = a * v
+proof
+let R be Ring, n be Nat, u be Element of R^*n,
+    v be Element of n-tuples_on (the carrier of R), a be Element of R;
+assume A: u = v;
+thus a * u = (the lmult of R^*n).(a,u) by VECTSP_1:def 12
+          .= vector_mult(n,R).(a,v) by A,DEF .= a * v by Defm;
+end;
+
+lemBA:
+for R being Ring, n being Nat
+for v being Element of n-tuples_on (the carrier of R)
+for a being Element of R
+for i being Nat st 1 <= i & i <= n holds
+(a * (i_th_unit_vector(n,R))).i = a &
+for j being Nat st j <> i & 1 <= j & j <= n holds
+(a * (j_th_unit_vector(n,R))).i = 0.R
+proof
+let R be Ring, n be Nat, v be Element of n-tuples_on (the carrier of R),
+    a be Element of R, i be Nat;
+assume AS: 1 <= i & i <= n; then
+B: (i_th_unit_vector(n,R)).i = 1.R by u1;
+i in Seg n by AS;
+hence (a * (i_th_unit_vector(n,R))).i = a * 1.R by B,FVSUM_1:51 .= a;
+now let j be Nat;
+  assume j <> i & 1 <= j & j <= n; then
+  D: (j_th_unit_vector(n,R)).i = 0.R by AS,u1;
+  i in Seg n by AS;
+  hence (a * (j_th_unit_vector(n,R))).i = a * 0.R by D,FVSUM_1:51 .= 0.R;
+  end;
+hence thesis;
+end;
+
+lemBC:
+for R being Ring, n being Nat
+for u,v being Element of R^*n,
+    a,b being Element of n-tuples_on (the carrier of R)
+st u = a & v = b holds a + b = u + v
+proof
+let R be Ring, n be Nat, u,v be Element of R^*n,
+    a,b be Element of n-tuples_on (the carrier of R);
+assume A: u = a & v = b;
+thus u + v = vector_add(n,R).(a,b) by A,DEF .= a + b by Defa;
+end;
+
+theorem lemBase:
+for R being non degenerated commutative Ring, n being Nat
+for l being Linear_Combination of Base(R,n)
+for v being Tuple of n,the carrier of R
+for i being Nat
+st v = Sum l & 1 <= i & i <= n holds v.i = l.(i_th_unit_vector(n,R))
+proof
+let R be non degenerated commutative Ring, n be Nat;
+let l be Linear_Combination of Base(R,n);
+let v be Tuple of n,the carrier of R, i be Nat;
+assume AS: v = Sum l & 1 <= i & i <= n;
+set V = R^*n, B = Base(R,n);
+consider F being FinSequence of the carrier of V such that
+A1: F is one-to-one & rng F = Carrier l & Sum l = Sum(l (#) F)
+    by VECTSP_6:def 6;
+set H = l (#) F;
+A2: len H = len F &
+    for i be Nat st i in dom H holds H.i = l.(F/.i) * F/.i by VECTSP_6:def 5;
+per cases;
+suppose H = {}; then
+  B3: F = {} by VECTSP_6:def 5; then
+  Carrier l = {} by A1; then
+  l = ZeroLC(V) by VECTSP_6:def 3; then
+  Sum l = 0.V by VECTSP_6:15 .= n |-> 0.R by DEF; then
+  B4: v.i = (Seg n --> 0.R).i by AS,FINSEQ_2:def 2
+         .= 0.R by AS,FINSEQ_1:1,FUNCOP_1:7;
+  the carrier of V = n-tuples_on (the carrier of R) by DEF;
+  hence v.i = l.(i_th_unit_vector(n,R)) by A1,B4,B3,VECTSP_6:2;
+  end;
+suppose Y1: H <> {}; then
+  len H > 0; then
+  0 + 1 <= len H by INT_1:7; then
+  Y2: 1 in dom F by A2,FINSEQ_3:25;
+defpred P[Nat] means
+  for v being Tuple of n,the carrier of R st $1 <= len H & v = Sum(H|($1))
+  for m being Nat st 1 <= m & m <= n holds
+  (m_th_unit_vector(n,R) in rng(F|($1)) & v.m = l.(m_th_unit_vector(n,R)))
+  or ((not m_th_unit_vector(n,R) in rng(F|($1))) & v.m = 0.R);
+IA: P[1]
+    proof
+    now let v be Tuple of n,the carrier of R;
+    assume C1: 1 <= len H & v = Sum(H|1);
+    let m being Nat;
+    assume C2: 1 <= m & m <= n;
+    C5: dom(H|(Seg 1)) c= dom H by RELAT_1:60;
+    C3: H|1 = <* (H|1).1 *> by C1,FINSEQ_1:59,FINSEQ_1:40; then
+    dom(H|1) = { 1 } by FINSEQ_1:2,FINSEQ_1:38; then
+    C6: 1 in dom(H|1) by TARSKI:def 1; then
+    (H|1).1 = (H|1)/.1 by PARTFUN1:def 6; then
+    C9: Sum(H|1) = (H|1).1 by C3,RLVECT_1:44
+                .= H.1 by C6,FUNCT_1:47
+                .= l.(F/.1) * F/.1 by C5,C6,VECTSP_6:def 5;
+    rng F c= B by A1,VECTSP_6:def 4; then
+    F.1 in B by Y2,FUNCT_1:3; then
+    consider i being Nat such that
+    C7: F.1 = i_th_unit_vector(n,R) & 1 <= i & i <= n;
+    C8: v = l.(F/.1) * (i_th_unit_vector(n,R))
+        by C1,C7,C9,Y2,PARTFUN1:def 6,lemBB;
+    per cases;
+    suppose D1: m = i;
+      D2: 1 in Seg 1;
+      F/.1 = i_th_unit_vector(n,R) by C7,Y2,PARTFUN1:def 6;
+      hence
+       (m_th_unit_vector(n,R) in rng(F|1) & v.m = l.(m_th_unit_vector(n,R)))
+        or ((not m_th_unit_vector(n,R) in rng(F|1)) & v.m = 0.R)
+       by D1,D2,C8,C7,Y2,FUNCT_1:50,lemBA;
+      end;
+    suppose D0: m <> i; then
+      D1: m_th_unit_vector(n,R) <> i_th_unit_vector(n,R) by C2,C7,u2;
+      now assume m_th_unit_vector(n,R) in rng(F|1); then
+        consider x being object such that
+        D2: x in dom(F|1) & (F|1).x = m_th_unit_vector(n,R) by FUNCT_1:def 3;
+        D3: (F|1).x = F.x by D2,FUNCT_1:47;
+        F|1 = <* (F|1).1 *> by A2,C1,FINSEQ_1:59,FINSEQ_1:40; then
+        dom(F|1) = { 1 } by FINSEQ_1:2,FINSEQ_1:38;
+        hence contradiction by C7,D1,D2,D3,TARSKI:def 1;
+        end;
+      hence
+       (m_th_unit_vector(n,R) in rng(F|1) & v.m = l.(m_th_unit_vector(n,R)))
+        or ((not m_th_unit_vector(n,R) in rng(F|1)) & v.m = 0.R)
+       by C2,C7,C8,D0,lemBA;
+      end;
+    end;
+    hence thesis;
+    end;
+IS: now let k be Element of NAT;
+    assume AS: 1 <= k & k < len H;
+    assume IV: P[k];
+    now let v be Tuple of n,the carrier of R;
+    assume C1: k+1 <= len H & v = Sum(H|(k+1));
+    let m being Nat;
+    assume C2: 1 <= m & m <= n;
+    set G1 = H|k;
+    reconsider v1 = Sum G1 as Element of n-tuples_on (the carrier of R) by DEF;
+    H: 1 <= k + 1 & k <= k + 1 by NAT_1:11; then
+    C3: k <= len H by C1,XXREAL_0:2;
+    C4: len(H|(k+1)) = k + 1 by C1,FINSEQ_1:59;
+    (H|(k+1))|(Seg k) = (H|(k+1))|k
+                     .= H|k by NAT_1:11,FINSEQ_1:82; then
+    C5: H|(k+1) = G1 ^ <* (H|(k+1)).(k+1) *> by C1,FINSEQ_1:59,FINSEQ_3:55;
+    dom(H|(k+1)) = Seg(k+1) by C4,FINSEQ_1:def 3; then
+    C6: k+1 in dom(H|(k+1)) by H;
+    C7: dom(H|(k+1)) c= dom H by RELAT_1:60;
+    (H|(k+1)).(k + 1) = H.(k+1) by C6,FUNCT_1:47
+                     .= H/.(k+1) by C6,C7,PARTFUN1:def 6; then
+    C8: Sum(H|(k+1)) = Sum G1 + Sum<* H/.(k + 1) *> by C5,RLVECT_1:41
+                    .= Sum G1 + H/.(k + 1) by RLVECT_1:44;
+    F|k = (F|(k+1))|k by NAT_1:11,FINSEQ_1:82; then
+    C9: rng(F|k) c= rng(F|(k+1)) by RELAT_1:70;
+    E0: dom F = Seg len H by A2,FINSEQ_1:def 3
+             .= dom H by FINSEQ_1:def 3;
+    E1: rng F c= B by A1,VECTSP_6:def 4;
+    F.(k+1) in B by E1,E0,C6,C7,FUNCT_1:3; then
+    consider i being Nat such that
+    E2: F.(k+1) = i_th_unit_vector(n,R) & 1 <= i & i <= n;
+    E4: H/.(k + 1) = H.(k+1) by C6,C7,PARTFUN1:def 6
+          .= l.(F/.(k+1)) * F/.(k+1) by C7,C6,VECTSP_6:def 5
+          .= l.(F/.(k+1)) * (i_th_unit_vector(n,R))
+             by E0,C6,C7,E2,PARTFUN1:def 6,lemBB;
+    E5: v = v1 + l.(F/.(k+1)) * (i_th_unit_vector(n,R)) by C1,C8,E4,lemBC;
+    len(F|(k+1)) = k + 1 by A2,C1,FINSEQ_1:59; then
+    dom(F|(k+1)) = Seg(k+1) by FINSEQ_1:def 3; then
+    E6: k+1 in dom(F|(k+1)) by H;
+per cases;
+suppose D0: not m_th_unit_vector(n,R) in rng(F|(k+1)); then
+not m_th_unit_vector(n,R) in rng(F|k) by C9; then
+D1: v1.m = 0.R by C2,C3,IV;
+D4: m in Seg n by C2;
+now assume D5: m_th_unit_vector(n,R) = i_th_unit_vector(n,R);
+  (F|(k+1)).(k+1) = i_th_unit_vector(n,R) by E2,E6,FUNCT_1:47;
+  hence contradiction by D0,D5,E6,FUNCT_1:def 3;
+  end; then
+((i_th_unit_vector(n,R))).m = 0.R by E2,C2,u1; then
+(l.(F/.(k+1)) * (i_th_unit_vector(n,R))).m = l.(F/.(k+1)) * 0.R
+    by D4,FVSUM_1:51; then
+v.m = 0.R + 0.R by E5,D4,D1,FVSUM_1:18 .= 0.R;
+hence
+  (m_th_unit_vector(n,R) in rng(F|(k+1)) & v.m = l.(m_th_unit_vector(n,R)))
+    or ((not m_th_unit_vector(n,R) in rng(F|(k+1))) & v.m = 0.R) by D0;
+end;
+suppose D0: m_th_unit_vector(n,R) in rng(F|(k+1));
+m_th_unit_vector(n,R) in n-tuples_on (the carrier of R); then
+F1: dom l = the carrier of R^*n &
+    m_th_unit_vector(n,R) in the carrier of R^*n by DEF,FUNCT_2:def 1;
+per cases;
+suppose D7: m_th_unit_vector(n,R) in rng(F|k); then
+D1: v1.m = l.(m_th_unit_vector(n,R)) by C2,C3,IV
+        .= l/.(m_th_unit_vector(n,R)) by F1,PARTFUN1:def 6;
+D4: m in Seg n by C2;
+consider x being object such that
+D5: x in dom(F|k) & (F|k).x = m_th_unit_vector(n,R) by D7,FUNCT_1:def 3;
+reconsider x as Element of NAT by D5;
+len(F|k) = k by AS,A2,FINSEQ_1:59; then
+dom(F|k) = Seg k by FINSEQ_1:def 3; then
+1 <= x & x <= k by D5,FINSEQ_1:1; then
+D8: x + 0 < k + 1 by XREAL_1:8;
+D9: dom(F|k) c= dom F by RELAT_1:60;
+m_th_unit_vector(n,R) <> i_th_unit_vector(n,R)
+  proof
+  F.x = m_th_unit_vector(n,R) by D5,FUNCT_1:47;
+  hence thesis by E0,E2,C6,C7,D8,D9,D5,A1;
+  end; then
+((i_th_unit_vector(n,R))).m = 0.R by E2,C2,u1; then
+(l.(F/.(k+1)) * (i_th_unit_vector(n,R))).m = l.(F/.(k+1)) * 0.R
+    by D4,FVSUM_1:51; then
+v.m = l/.(m_th_unit_vector(n,R)) + 0.R by E5,D4,D1,FVSUM_1:18
+   .= l.(m_th_unit_vector(n,R)) by F1,PARTFUN1:def 6;
+hence
+  (m_th_unit_vector(n,R) in rng(F|(k+1)) & v.m = l.(m_th_unit_vector(n,R)))
+    or ((not m_th_unit_vector(n,R) in rng(F|(k+1))) & v.m = 0.R) by D0;
+end;
+suppose D7: not m_th_unit_vector(n,R) in rng(F|k); then
+D1: v1.m = 0.R by C2,C3,IV;
+D4: m in Seg n by C2;
+consider x being object such that
+D5: x in dom(F|(k+1)) &
+    (F|(k+1)).x = m_th_unit_vector(n,R) by D0,FUNCT_1:def 3;
+reconsider x as Element of NAT by D5;
+len(F|(k+1)) = k+1 by A2,C1,FINSEQ_1:59; then
+D10: dom(F|(k+1)) = Seg(k+1) by FINSEQ_1:def 3; then
+D11: 1 <= x & x <= k+1 by D5,FINSEQ_1:1;
+D8: now assume x <> k + 1; then
+    x < k + 1 by D11,XXREAL_0:1; then
+    1 <= x & x <= k by D10,D5,FINSEQ_1:1,INT_1:7; then
+    E1: x in Seg k;
+    len(F|k) = k by AS,A2,FINSEQ_1:59; then
+    E3: x in dom(F|k) by E1,FINSEQ_1:def 3;
+    (F|k).x = F.x by E3,FUNCT_1:47 .= (F|(k+1)).x by D5,FUNCT_1:47;
+    hence contradiction by E3,D5,D7,FUNCT_1:3;
+    end;
+D9: dom(F|(k+1)) c= dom F by RELAT_1:60;
+F.x = m_th_unit_vector(n,R) by D5,FUNCT_1:47; then
+D12: F/.(k+1) = m_th_unit_vector(n,R) by D5,D8,D9,PARTFUN1:def 6;
+m_th_unit_vector(n,R) = i_th_unit_vector(n,R) by E2,D8,D5,FUNCT_1:47; then
+i_th_unit_vector(n,R).m = 1.R by C2,u1; then
+(l.(F/.(k+1)) * (i_th_unit_vector(n,R))).m
+    = l.(F/.(k+1)) * 1.R by D4,FVSUM_1:51
+   .= l/.(m_th_unit_vector(n,R)) by D12,F1,PARTFUN1:def 6; then
+v.m = 0.R + l/.(m_th_unit_vector(n,R)) by E5,D4,D1,FVSUM_1:18
+   .= l.(m_th_unit_vector(n,R)) by F1,PARTFUN1:def 6;
+hence
+  (m_th_unit_vector(n,R) in rng(F|(k+1)) & v.m = l.(m_th_unit_vector(n,R)))
+    or ((not m_th_unit_vector(n,R) in rng(F|(k+1))) & v.m = 0.R) by D0;
+end;
+end;
+    end;
+    hence P[k+1];
+    end;
+A3: for k being Element of NAT st 1 <= k & k <= len H holds P[k]
+    from INT_1:sch 7(IA,IS);
+len H > 0 by Y1; then
+A4: 0 + 1 <= len H by INT_1:7;
+A5: v = Sum(H|(len H)) by AS,A1,FINSEQ_1:58;
+A6: F|(len H) = F by A2,FINSEQ_1:58;
+H: the carrier of V = n-tuples_on (the carrier of R) by DEF;
+per cases;
+suppose i_th_unit_vector(n,R) in Carrier l;
+  hence v.i = l.(i_th_unit_vector(n,R)) by AS,A1,A3,A4,A5,A6;
+  end;
+suppose A7: not i_th_unit_vector(n,R) in Carrier l;
+  hence v.i = 0.R by AS,A1,A3,A4,A5,A6 .= l.(i_th_unit_vector(n,R)) by H,A7;
+  end;
+end;
+end;
+
+registration
+let R be non degenerated commutative Ring;
+let n be Nat;
+cluster Base(R,n) -> linearly-independent;
+coherence
+proof
+set B = Base(R,n), V = R^*n;
+now let l be Linear_Combination of B;
+  assume A0: Carrier(l) <> {};
+  set o = the Element of Carrier(l);
+  A1: o in Carrier(l) & Carrier l c= Base(R,n) by A0,VECTSP_6:def 4; then
+  o in Base(R,n); then
+  consider i being Nat such that
+  A2: o = i_th_unit_vector(n,R) & 1 <= i & i <= n;
+  consider v being Element of V such that
+  A3: o = v & l.v <> 0.R by A1;
+  Sum l in the carrier of R^*n; then
+  Sum l in n-tuples_on the carrier of R by DEF; then
+  reconsider w = Sum l as Tuple of n,the carrier of R by FINSEQ_2:131;
+  A4: w.i <> 0.R by A3,A2,lemBase;
+  (n |-> (0.R)).i = (Seg n --> 0.R).i by FINSEQ_2:def 2
+                 .= 0.R by A2,FINSEQ_1:1,FUNCOP_1:7;
+  hence Sum l <> 0.V by A4,DEF;
+  end; then
+for l be Linear_Combination of B st Sum(l) = 0.V holds Carrier(l) = {};
+hence thesis by VECTSP_7:def 1;
+end;
+end;
+
+lemspan1:
+for R being non degenerated commutative Ring, n being Nat,
+    o being Element of R^*n
+ex l being Linear_Combination of Base(R,n) st Sum l = o
+proof
+let R be non degenerated commutative Ring, n be Nat, o be Element of R^*n;
+o in the carrier of R^*n; then
+H: o in n-tuples_on the carrier of R by DEF; then
+reconsider t = o as Tuple of n,the carrier of R by FINSEQ_2:131;
+defpred P[object,object] means
+  (ex i being Nat st 1 <= i & i <= n & $1 = i_th_unit_vector(n,R) & $2 = t.i)
+  or
+  (not $1 in Base(R,n) & $2 = 0.R);
+A: now let x be object;
+   assume x in the carrier of R^*n;
+   per cases;
+   suppose x in Base(R,n); then
+     consider i being Nat such that
+     B: x = i_th_unit_vector(n,R) & 1 <= i & i <= n;
+     i in Seg n by B; then
+     i in dom t by FINSEQ_2:124; then
+     t.i in rng t by FUNCT_1:3;
+     hence ex y being object st y in the carrier of R & P[x,y] by B;
+     end;
+   suppose not x in Base(R,n);
+     hence ex y being object st y in the carrier of R & P[x,y];
+     end;
+   end;
+consider f being Function of the carrier of R^*n,the carrier of R such that
+B: for x being object st x in the carrier of R^*n holds P[x,f.x]
+   from FUNCT_2:sch 1(A);
+D: now let v be Element of R^*n;
+   assume E: not v in Base(R,n);
+   P[v,f.v] by B;
+   hence f.v = 0.R by E;
+   end;
+dom f = the carrier of R^*n & rng f c= the carrier of R
+   by FUNCT_2:def 1; then
+reconsider f as Element of Funcs(the carrier of R^*n, the carrier of R)
+   by FUNCT_2:def 2;
+ex T being finite Subset of R^*n st
+for v being Element of R^*n st not v in T holds f.v = 0.R
+   proof
+   take T = Base(R,n);
+   now let v be Element of R^*n;
+     assume E: not v in T;
+     P[v,f.v] by B;
+     hence f.v = 0.R by E;
+     end;
+   hence thesis;
+   end; then
+reconsider l = f as Linear_Combination of R^*n by VECTSP_6:def 1;
+Carrier l c= Base(R,n)
+   proof
+   now let o be object;
+     assume o in Carrier l; then
+     consider v being Element of R^*n such that
+     E: o = v & l.v <> 0.R;
+     thus o in Base(R,n) by D,E;
+     end;
+   hence thesis;
+   end; then
+reconsider l as Linear_Combination of Base(R,n) by VECTSP_6:def 4;
+Sum l in the carrier of R^*n; then
+J: Sum l in n-tuples_on (the carrier of R) by DEF;
+n-tuples_on (the carrier of R) =
+  {s where s is Element of (the carrier of R)*: len s = n} by FINSEQ_2:def 4;
+then consider s being Element of (the carrier of R)* such that
+K: Sum l = s & len s = n by J;
+reconsider u = Sum l as Tuple of n,the carrier of R by K,J;
+E: now let i be Nat;
+   assume E1: 1 <= i & i <= n;
+   the carrier of R^*n = n-tuples_on (the carrier of R) by DEF; then
+   P[i_th_unit_vector(n,R),l.(i_th_unit_vector(n,R))] by B; then
+   consider j being Nat such that
+   E2: 1 <= j & j <= n & j_th_unit_vector(n,R) = i_th_unit_vector(n,R) &
+       l.(j_th_unit_vector(n,R)) = t.j by E1;
+   l.(i_th_unit_vector(n,R)) = t.i by E1,E2,u2;
+   hence u.i = t.i by E1,lemBase;
+   end;
+len u = n & len t = n by H,J,FINSEQ_2:133;
+hence thesis by E,FINSEQ_1:14;
+end;
+
+theorem lemspan:
+for R being non degenerated commutative Ring, n being Nat
+holds Lin Base(R,n) = R^*n
+proof
+let R be non degenerated commutative Ring, n be Nat;
+set V = Lin Base(R,n), B = Base(R,n);
+A: the carrier of V = the set of all Sum(l) where
+                      l is Linear_Combination of B by VECTSP_7:def 2;
+B: the carrier of V c= the carrier of R^*n by VECTSP_4:def 2;
+   now let o be object;
+   assume o in the carrier of R^*n; then
+   consider l being Linear_Combination of Base(R,n) such that
+   C: Sum l = o by lemspan1;
+   thus o in the carrier of V by C,A;
+   end; then
+the carrier of R^*n c= the carrier of V;
+hence thesis by B,XBOOLE_0:def 10,VECTSP_4:31;
+end;
+
+registration
+let R be non degenerated commutative Ring;
+let n be Nat;
+cluster Base(R,n) -> base;
+coherence
+proof
+Lin Base(R,n) = the ModuleStr of R^*n by lemspan;
+hence thesis by VECTSP_7:def 3;
+end;
+end;
+
+registration
+let F be Field;
+let n be Nat;
+cluster F^*n -> finite-dimensional;
+coherence
+proof
+Base(F,n) is Subset of F^*n;
+hence thesis by MATRLIN:def 1;
+end;
+end;
+
+theorem DimF:
+for F being Field, n being Nat holds dim(F^*n) = n
+proof
+let F be Field, n be Nat;
+dim Lin Base(F,n) = card Base(F,n) by VECTSP_9:26 .= n by cardB;
+hence thesis by lemspan;
+end;
+
+definition
+let R be Ring;
+let U,V be VectSp of R;
+pred U,V are_isomorphic means
+  ex T being linear-transformation of U,V st T is bijective;
+end;
+
+theorem UisoV:
+for F being Field
+for U,V being finite-dimensional VectSp of F
+holds U,V are_isomorphic iff dim U = dim V
+proof
+let F be Field, U,V be finite-dimensional VectSp of F;
+now assume AS: dim U = dim V;
+  per cases;
+  suppose dim U = 0; then
+   H0: (Omega).U = (0).U & (Omega).V = (0).V by AS,VECTSP_9:29;
+   H1: the carrier of U = {0.U} by H0,VECTSP_4:def 3;
+   H2: the carrier of V = {0.V} by H0,VECTSP_4:def 3;
+   deffunc F(object) = 0.V;
+   H3: for x be object st x in the carrier of U holds F(x) in the carrier of V;
+   consider T being Function of the carrier of U, the carrier of V such that
+   A: for u being object st u in the carrier of U holds T.u = F(u)
+      from FUNCT_2:sch 2(H3);
+   now let u1,u2 be Element of U;
+     thus T.u1 + T.u2 = 0.V + T.u2 by A .= 0.V + 0.V by A .= T.(u1+u2) by A;
+     end; then
+   B: T is additive by VECTSP_1:def 20;
+   now let a be Element of F, u be Element of U;
+     thus a * T.u = a * 0.V by A .= 0.V by VECTSP_1:14 .= T.(a*u) by A;
+     end; then
+   C: T is homogeneous by MOD_2:def 2;
+   now let x1,x2 be object;
+     assume H4: x1 in the carrier of U & x2 in the carrier of U & T.x1 = T.x2;
+     hence x1 = 0.U by H1,TARSKI:def 1 .= x2 by H1,H4,TARSKI:def 1;
+     end; then
+   D: T is one-to-one by FUNCT_2:19;
+   H5: dom T = the carrier of U by FUNCT_2:def 1;
+   now let o be object;
+     assume o in the carrier of V; then
+     o = 0.V by H2,TARSKI:def 1; then
+     T.(0.U) = o & 0.U in dom T by H5,A;
+     hence o in rng T by FUNCT_1:def 3;
+     end; then
+   rng T c= the carrier of V & the carrier of V c= rng T; then
+   rng T = the carrier of V; then
+   T is onto by FUNCT_2:def 3;
+   hence U,V are_isomorphic by B,C,D;
+   end;
+  suppose K: dim U > 0;
+   set Bv = the Basis of V;
+   card Bv > 0 by AS,K,VECTSP_9:def 1; then
+   reconsider Bv1 = Bv as non empty Subset of V;
+   reconsider U1 = U as non trivial finite-dimensional VectSp of F
+     by K,MATRLIN2:42;
+   set Bu = the Basis of U1;
+   card Bu = dim V by AS,VECTSP_9:def 1 .= card Bv1 by VECTSP_9:def 1; then
+   consider f1 being Function of Bu,Bv1 such that
+   H: f1 is bijective by lemiso;
+   J: dom f1 = Bu & rng f1 c= Bv1 & Bv1 c= the carrier of V
+      by FUNCT_2:def 1; then
+      rng f1 c= the carrier of V; then
+   reconsider f = f1 as Function of Bu,V by J,FUNCT_2:2;
+   set T = canLinTrans f;
+   rng f is linearly-independent by J,VECTSP_7:1; then
+   A: T is one-to-one by H,canLininj;
+   now let o be object;
+     assume o in the carrier of V; then
+     reconsider v = o as Element of V;
+     rng f1 = Bv by H,FUNCT_2:def 3; then
+     im(canLinTrans f) = Lin Bv1 by canlinsurj; then
+     the ModuleStr of V = im T by VECTSP_7:def 3; then
+     v in (im T); then
+     D: ex x being Element of U st v = T.x by RANKNULL:13;
+     dom T = the carrier of U by FUNCT_2:def 1;
+     hence o in rng T by D,FUNCT_1:def 3;
+     end;
+   then rng(canLinTrans f) c= the carrier of V &
+        the carrier of V c= rng(canLinTrans f);
+   then canLinTrans f is onto by XBOOLE_0:def 10,FUNCT_2:def 3;
+   hence U,V are_isomorphic by A;
+   end;
+   end;
+hence thesis by VECTSP12:4;
+end;
+
+theorem
+for F being Field
+for U being finite-dimensional VectSp of F holds U,F^*(dim U) are_isomorphic
+proof
+let F be Field, U be finite-dimensional VectSp of F;
+dim(F^*(dim U)) = dim U by DimF;
+hence thesis by UisoV;
+end;
+
+theorem Fin1:
+for R being finite Ring, n being Nat
+holds card(the carrier of R^*n) = card(the carrier of R) |^ n
+proof
+let R be finite Ring, n be Nat;
+set D = the carrier of R;
+A: card(Seg n) = card n by FINSEQ_1:57;
+B: card D = card D & n-tuples_on D = Funcs(Seg n,D) by FINSEQ_2:93;
+thus card(the carrier of R^*n)
+   = card Funcs(Seg n,D) by B,DEF
+  .= card(the carrier of R) |^ n by A,CARD_FIN:4;
+end;
+
+registration
+let R be finite Ring;
+let n be Nat;
+cluster R^*n -> finite;
+coherence
+proof
+consider k being Nat such that A: card(the carrier of R) = k;
+card(the carrier of R^*n) = k|^n by A,Fin1;
+hence thesis;
+end;
+end;
+
+begin :: The Vector Space of Maps into a Ring R
+
+definition
+let X be non empty set;
+let L be non empty addLoopStr;
+let f,g be Function of X,L;
+func f '+' g -> Function of X,L means :defp:
+  for x being Element of X holds it.x = f.x + g.x;
+existence
+proof
+defpred P[object,object] means
+   ex x being Element of X st $1 = x & $2 = f.x + g.x;
+A: now let o be object;
+   assume o in X; then
+   reconsider x = o as Element of X;
+   thus ex y being object st y in the carrier of L & P[o,y]
+     proof
+     take y = f.x + g.x;
+     thus y in the carrier of L;
+     thus thesis;
+     end;
+   end;
+consider h being Function of X,the carrier of L such that
+B: for x being object st x in X holds P[x,h.x] from FUNCT_2:sch 1(A);
+take h;
+now let x be Element of X;
+  P[x,h.x] by B;
+  hence h.x = f.x + g.x;
+  end;
+hence thesis;
+end;
+uniqueness
+proof
+let f1,f2 be Function of X,L;
+assume A: for x being Element of X holds f1.x = f.x + g.x;
+assume B: for x being Element of X holds f2.x = f.x + g.x;
+now let o be object;
+  assume o in X; then
+  reconsider x = o as Element of X;
+  thus f1.o = f.x + g.x by A .= f2.o by B;
+  end;
+hence f1 = f2 by FUNCT_2:12;
+end;
+end;
+
+definition
+let X be non empty set;
+let L be non empty Abelian addLoopStr;
+let f,g be Function of X,L;
+redefine func f '+' g;
+commutativity
+proof
+now let f1,f2 be Function of X,L;
+  now let o be object;
+    assume o in X; then
+    reconsider x = o as Element of X;
+    thus (f1 '+' f2).o = f1.x + f2.x by defp
+                      .= (f2 '+' f1).o by defp;
+    end;
+  hence f1 '+' f2 = f2 '+' f1 by FUNCT_2:12;
+  end;
+hence thesis;
+end;
+end;
+
+definition
+let X be non empty set;
+let L be non empty addLoopStr;
+let f be Function of X,L;
+func '-' f -> Function of X,L means :defm:
+  for x being Element of X holds it.x = -f.x;
+existence
+proof
+defpred P[object,object] means
+   ex x being Element of X st $1 = x & $2 = -f.x;
+A: now let o be object;
+   assume o in X; then
+   reconsider x = o as Element of X;
+   thus ex y being object st y in the carrier of L & P[o,y]
+     proof
+     take y = -f.x;
+     thus y in the carrier of L;
+     thus thesis;
+     end;
+   end;
+consider h being Function of X,the carrier of L such that
+B: for x being object st x in X holds P[x,h.x] from FUNCT_2:sch 1(A);
+take h;
+now let x be Element of X;
+  P[x,h.x] by B;
+  hence h.x = -f.x;
+  end;
+hence thesis;
+end;
+uniqueness
+proof
+let f1,f2 be Function of X,L;
+assume A: for x being Element of X holds f1.x = -f.x;
+assume B: for x being Element of X holds f2.x = -f.x;
+now let o be object;
+  assume o in X; then
+  reconsider x = o as Element of X;
+  thus f1.o = -f.x by A .= f2.o by B;
+  end;
+hence f1 = f2 by FUNCT_2:12;
+end;
+end;
+
+definition
+let X be non empty set;
+let L be non empty multLoopStr;
+let f be Function of X,L;
+let a be Element of L;
+func a '*' f -> Function of X,L means :defmu:
+  for x being Element of X holds it.x = a * f.x;
+existence
+proof
+defpred P[object,object] means
+   ex x being Element of X st $1 = x & $2 = a * f.x;
+A: now let o be object;
+   assume o in X; then
+   reconsider x = o as Element of X;
+   thus ex y being object st y in the carrier of L & P[o,y]
+     proof
+     take y = a * f.x;
+     thus y in the carrier of L;
+     thus thesis;
+     end;
+   end;
+consider h being Function of X,the carrier of L such that
+B: for x being object st x in X holds P[x,h.x] from FUNCT_2:sch 1(A);
+take h;
+now let x be Element of X;
+  P[x,h.x] by B;
+  hence h.x = a * f.x;
+  end;
+hence thesis;
+end;
+uniqueness
+proof
+let f1,f2 be Function of X,L;
+assume A: for x being Element of X holds f1.x = a * f.x;
+assume B: for x being Element of X holds f2.x = a * f.x;
+now let o be object;
+  assume o in X; then
+  reconsider x = o as Element of X;
+  thus f1.o = a * f.x by A .= f2.o by B;
+  end;
+hence f1 = f2 by FUNCT_2:12;
+end;
+end;
+
+registration
+let X be non empty set;
+let L be left_unital non empty multLoopStr;
+let f be Function of X,L;
+reduce (1.L) '*' f to f;
+reducibility
+proof
+now let o be object;
+  assume o in X; then
+  reconsider x = o as Element of X;
+  thus ((1.L) '*' f).o = (1.L) * (f.x) by defmu .= f.o;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+end;
+
+theorem ass:
+for X being non empty set
+for L being non empty add-associative addLoopStr
+for f,g,h being Function of X,L holds (f '+' g) '+' h = f '+' (g '+' h)
+proof
+let X be non empty set, L be non empty add-associative addLoopStr,
+    f,g,h be Function of X,L;
+now let o be object;
+  assume o in X; then
+  reconsider x = o as Element of X;
+  thus ((f '+' g) '+' h).o
+     = (f'+'g).x + h.x by defp
+    .= (f.x + g.x) + h.x by defp
+    .= f.x + (g.x + h.x) by RLVECT_1:def 3
+    .= f.x + (g'+'h).x by defp
+    .= (f '+' (g '+' h)).o by defp;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+
+theorem rc:
+for X being non empty set
+for L being non empty
+            add-associative right_zeroed right_complementable addLoopStr
+for f being Function of X,L holds f '+' ('-' f) = X --> 0.L
+proof
+let X be non empty set,
+L be non empty add-associative right_zeroed right_complementable addLoopStr,
+f be Function of X,L;
+now let o be object;
+  assume o in X;
+  then reconsider x = o as Element of X;
+  thus (f '+' ('-' f)).o
+     = f.x + ('-'f).x by defp
+    .= f.x + -(f.x) by defm
+    .= (X --> 0.L).o by RLVECT_1:5;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+
+theorem sd:
+for X being non empty set
+for L being left-distributive non empty doubleLoopStr
+for a,b being Element of L
+for f being Function of X,L holds (a + b) '*' f = (a '*' f) '+' (b '*' f)
+proof
+let X be non empty set, L be left-distributive non empty doubleLoopStr,
+    a,b be Element of L, f be Function of X,L;
+now let o be object;
+  assume o in X;
+  then reconsider x = o as Element of X;
+  thus ((a + b) '*' f).o
+     = (a + b) * f.x by defmu
+    .= a * f.x + b * f.x by VECTSP_1:def 3
+    .= (a '*' f).x + (b * f.x) by defmu
+    .= (a '*' f).x + (b '*' f).x by defmu
+    .= ((a '*' f) '+' (b '*' f)).o by defp;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+
+theorem sa:
+for X being non empty set
+for L being associative non empty multLoopStr
+for a,b being Element of L
+for f being Function of X,L holds (a * b) '*' f = a '*' (b '*' f)
+proof
+let X be non empty set, L be non empty associative multLoopStr,
+    a,b be Element of L, f be Function of X,L;
+now let o be object;
+  assume o in X;
+  then reconsider x = o as Element of X;
+  thus ((a * b) '*' f).o
+     = (a * b) * (f.x) by defmu
+    .= a * (b * f.x) by GROUP_1:def 3
+    .= a * (b '*' f).x by defmu
+    .= (a '*' (b '*' f)).o by defmu;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+
+theorem vd:
+for X being non empty set
+for L being right-distributive non empty doubleLoopStr
+for a being Element of L
+for f,g being Function of X,L holds a '*' (f '+' g) = (a '*' f) '+' (a '*' g)
+proof
+let X be non empty set, L be right-distributive non empty doubleLoopStr,
+    a be Element of L, f,g be Function of X,L;
+now let o be object;
+  assume o in X;
+  then reconsider x = o as Element of X;
+  thus (a '*' (f '+' g)).o
+     = a * ((f'+'g).x) by defmu
+    .= a * (f.x + g.x) by defp
+    .= a * f.x + a * g.x by VECTSP_1:def 2
+    .= a * f.x + (a '*' g).x by defmu
+    .= (a '*' f).x + (a '*' g).x by defmu
+    .= ((a '*' f) '+' (a '*' g)).o by defp;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+
+definition
+let X be non empty set;
+let L be non empty addLoopStr;
+func mapAdd(X,L) -> BinOp of Funcs(X,the carrier of L) means :dA:
+  for f,g being Function of X,L holds it.(f,g) = f '+' g;
+existence
+proof
+defpred P[object,object,object] means
+  ex w,u,v being Function of X,L st w = $3 & u = $1 & v = $2 & w = u '+' v;
+A0: for x,y being object
+    st x in Funcs(X,the carrier of L) & y in Funcs(X,the carrier of L)
+    ex z being object st z in Funcs(X,the carrier of L) & P[x,y,z]
+    proof
+    let x,y be object;
+    assume x in Funcs(X,the carrier of L) & y in Funcs(X,the carrier of L);
+    then reconsider u = x, v = y as Function of X,the carrier of L
+         by FUNCT_2:66;
+    take z = u '+' v;
+    thus z in Funcs(X,the carrier of L) by FUNCT_2:8;
+    thus P[x,y,z];
+    end;
+consider h being Function of
+    [:Funcs(X,the carrier of L),Funcs(X,the carrier of L):],
+    Funcs(X,the carrier of L) such that
+A1: for x,y being object
+    st x in Funcs(X,the carrier of L) & y in Funcs(X,the carrier of L)
+    holds P[x,y,h.(x,y)] from BINOP_1:sch 1(A0);
+take h;
+now let f,g be Function of X,the carrier of L;
+  f in Funcs(X,the carrier of L) &
+  g in Funcs(X,the carrier of L) by FUNCT_2:8;
+  then P[f,g,h.(f,g)] by A1;
+  hence h.(f,g) = f '+' g;
+  end;
+hence thesis;
+end;
+uniqueness
+proof
+let w1,w2 be BinOp of Funcs(X,the carrier of L) such that
+A1: for f,g being Function of X,L holds w1.(f,g) = f '+' g and
+A2: for f,g being Function of X,L holds w2.(f,g) = f '+' g;
+now let o be object;
+  assume o in [:Funcs(X,the carrier of L),Funcs(X,the carrier of L):]; then
+  consider u,v being object such that
+  A3: u in Funcs(X,the carrier of L) & v in Funcs(X,the carrier of L) &
+      o = [u,v] by ZFMISC_1:def 2;
+  reconsider u,v as Function of X,the carrier of L by A3,FUNCT_2:66;
+  w1.(u,v) = u '+' v by A1 .= w2.(u,v) by A2;
+  hence w1.o = w2.o by A3;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+end;
+
+definition
+let X be non empty set;
+let L be non empty multLoopStr;
+func mapMult(X,L) ->
+       Function of [:the carrier of L,Funcs(X,the carrier of L):],
+                   Funcs(X,the carrier of L) means :dM:
+  for f being Function of X,L, a being Element of L holds it.(a,f) = a '*' f;
+existence
+proof
+defpred P[object,object,object] means
+  ex u,w being Function of X,L, a being Element of L
+  st w = $3 & a = $1 & u = $2 & w = a '*' u;
+A0: for x,y being object
+    st x in the carrier of L & y in Funcs(X,the carrier of L)
+    ex z being object st z in Funcs(X,the carrier of L) & P[x,y,z]
+    proof
+    let x,y be object;
+    assume B: x in the carrier of L & y in Funcs(X,the carrier of L); then
+    reconsider a = x as Element of the carrier of L;
+    reconsider h = y as Element of Funcs(X,the carrier of L) by B;
+    take z = a '*' h;
+    thus z in Funcs(X,the carrier of L) by FUNCT_2:8;
+    thus P[x,y,z];
+    end;
+consider h being Function of
+    [:the carrier of L,Funcs(X,the carrier of L):],
+    Funcs(X,the carrier of L) such that
+A1: for x,y being object
+    st x in the carrier of L & y in Funcs(X,the carrier of L)
+    holds P[x,y,h.(x,y)] from BINOP_1:sch 1(A0);
+take h;
+now let a be Element of L, f be Function of X,L;
+  f in Funcs(X,the carrier of L) by FUNCT_2:8;
+  then P[a,f,h.(a,f)] by A1;
+  hence h.(a,f) = a '*' f;
+  end;
+hence thesis;
+end;
+uniqueness
+proof
+let v,w be Function of [:the carrier of L,Funcs(X,the carrier of L):],
+                       Funcs(X,the carrier of L) such that
+A1: for f being Function of X,L, a being Element of L holds v.(a,f) = a '*' f
+    and
+A2: for f being Function of X,L, a being Element of L holds w.(a,f) = a '*' f;
+now let o be object;
+  assume o in [:the carrier of L,Funcs(X,the carrier of L):]; then
+  consider a,h being object such that
+  A3: a in the carrier of L &
+      h in Funcs(X,the carrier of L) & o = [a,h] by ZFMISC_1:def 2;
+  reconsider a as Element of the carrier of L by A3;
+  reconsider h as Element of Funcs(X,the carrier of L) by A3;
+  v.(a,h) = a '*' h by A1 .= w.(a,h) by A2;
+  hence v.o = w.o by A3;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+end;
+
+definition
+let X be non empty set;
+let L be non empty doubleLoopStr;
+func Maps(X,L) -> strict ModuleStr over L means :defmap:
+  the carrier of it = Funcs(X,the carrier of L) &
+  the addF of it = mapAdd(X,L) &
+  the ZeroF of it = (X --> 0.L) &
+  the lmult of it = mapMult(X,L);
+existence
+proof
+reconsider o = (X --> 0.L) as Element of Funcs(X,the carrier of L)
+  by FUNCT_2:8;
+take ModuleStr (#Funcs(X,the carrier of L),mapAdd(X,L),
+                 o,mapMult(X,L)#);
+thus thesis;
+end;
+uniqueness;
+end;
+
+definition
+let X,L be non empty doubleLoopStr;
+func Maps(X,L) equals
+  Maps(the carrier of X,L);
+coherence;
+end;
+
+registration
+let X be non empty set;
+let L be non empty doubleLoopStr;
+cluster Maps(X,L) -> non empty;
+coherence
+proof
+set f = the Function of X,L;
+f in Funcs(X,the carrier of L) by FUNCT_2:8;
+hence thesis by defmap;
+end;
+end;
+
+registration
+let X be non empty set;
+let L be non empty Abelian doubleLoopStr;
+cluster Maps(X,L) -> Abelian;
+coherence
+proof
+set V = Maps(X,L);
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let x,y be Element of V;
+  reconsider f = x, g = y as Function of X,the carrier of L by A,FUNCT_2:66;
+  thus x+y = f'+'g by A,dA .= y+x by A,dA;
+  end;
+hence V is Abelian by RLVECT_1:def 2;
+end;
+end;
+
+registration
+let X be non empty set;
+let L be non empty add-associative doubleLoopStr;
+cluster Maps(X,L) -> add-associative;
+coherence
+proof
+set V = Maps(X,L);
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let x,y,z be Element of V;
+  reconsider f=x,g=y,h=z as Function of X,the carrier of L by A,FUNCT_2:66;
+  B: x + y = f '+' g & y + z = g '+' h by A,dA;
+  hence (x+y)+z = (f'+'g)'+'h by A,dA
+               .= f'+'(g'+'h) by ass .= x+(y+z) by B,A,dA;
+  end;
+hence thesis by RLVECT_1:def 3;
+end;
+end;
+
+registration
+let X be non empty set;
+let L be non empty right_zeroed doubleLoopStr;
+cluster Maps(X,L) -> right_zeroed;
+coherence
+proof
+set V = Maps(X,L), g = X --> 0.L;
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let x be Element of V;
+  reconsider f = x as Function of X,the carrier of L by A,FUNCT_2:66;
+  B: now let o be object;
+     assume o in X;
+     then reconsider x = o as Element of X;
+     thus (f'+'g).o = f.x + g.x by defp .= f.o by RLVECT_1:def 4;
+     end;
+  thus x + 0.V = f '+' g by A,dA .= x by B,FUNCT_2:12;
+  end;
+hence thesis by RLVECT_1:def 4;
+end;
+end;
+
+registration
+let X be non empty set;
+let L be non empty
+          add-associative right_zeroed right_complementable doubleLoopStr;
+cluster Maps(X,L) -> right_complementable;
+coherence
+proof
+set V = Maps(X,L);
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let x be Element of V;
+  reconsider f = x as Function of X,the carrier of L by A,FUNCT_2:66;
+  reconsider y = '-'f as Element of V by A,FUNCT_2:8;
+  x + y = f '+' ('-'f) by A,dA .= 0.V by rc,A;
+  hence x is right_complementable by ALGSTR_0:def 11;
+  end;
+hence thesis by ALGSTR_0:def 16;
+end;
+end;
+
+registration
+let X be non empty set;
+let L be left-distributive non empty doubleLoopStr;
+cluster Maps(X,L) -> scalar-distributive;
+coherence
+proof
+set V = Maps(X,L);
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let a,b be Element of L, v be Element of V;
+  reconsider f = v as Function of X,L by A,FUNCT_2:66;
+  a * v = (the lmult of V).(a,v) & b * v = (the lmult of V).(b,v)
+     by VECTSP_1:def 12; then
+  B: a '*' f = a * v & b '*' f = b * v by A,dM;
+  thus (a + b) * v
+     = mapMult(X,L).(a+b,f) by A,VECTSP_1:def 12
+    .= (a + b) '*' f by dM
+    .= (a '*' f) '+' (b '*' f) by sd
+    .= a * v + b * v by B,A,dA;
+  end;
+hence thesis by VECTSP_1:def 15;
+end;
+end;
+
+registration
+let X be non empty set;
+let L be associative non empty doubleLoopStr;
+cluster Maps(X,L) -> scalar-associative;
+coherence
+proof
+set V = Maps(X,L);
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let a,b be Element of L, v be Element of V;
+  reconsider f = v as Function of X,L by A,FUNCT_2:66;
+  a * v = (the lmult of V).(a,v) & b * v = (the lmult of V).(b,v)
+     by VECTSP_1:def 12; then
+  B: b '*' f = b * v by A,dM;
+  thus (a * b) * v
+     = (the lmult of V).(a*b,v) by VECTSP_1:def 12
+    .= (a * b) '*' f by A,dM
+    .= a '*' (b '*' f) by sa
+    .= (the lmult of V).(a,b*v) by A,B,dM
+    .= a * (b * v) by VECTSP_1:def 12;
+  end;
+hence thesis by VECTSP_1:def 16;
+end;
+end;
+
+registration
+let X be non empty set;
+let L be right-distributive non empty doubleLoopStr;
+cluster Maps(X,L) -> vector-distributive;
+coherence
+proof
+set V = Maps(X,L);
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let a be Element of L, u,v be Element of V;
+  reconsider f = u, g = v as Function of X,L by A,FUNCT_2:66;
+  a * v = (the lmult of V).(a,v) & a * u = (the lmult of V).(a,u)
+     by VECTSP_1:def 12; then
+  B: a '*' f = a * u & a '*' g = a * v by A,dM;
+  C: f '+' g = u + v by A,dA;
+  thus a * (u + v)
+     = mapMult(X,L).(a,f'+'g) by A,C, VECTSP_1:def 12
+    .= a '*' (f '+' g) by dM
+    .= (a '*' f) '+' (a '*' g) by vd
+    .= a * u + a * v by B,A,dA;
+  end;
+hence thesis by VECTSP_1:def 14;
+end;
+end;
+
+registration
+let X be non empty set;
+let L be left_unital non empty doubleLoopStr;
+cluster Maps(X,L) -> scalar-unital;
+coherence
+proof
+set V = Maps(X,L);
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let v be Element of V;
+  reconsider f = v as Function of X,L by A,FUNCT_2:66;
+  thus (1.L) * v
+     = (the lmult of V).(1.L,v) by VECTSP_1:def 12
+    .= (1.L) '*' f by A,dM
+    .= v;
+  end;
+hence thesis by VECTSP_1:def 17;
+end;
+end;
+
+begin :: The Vector Space of Linear Transformations
+
+definition
+let X be non empty set;
+let R be non empty 1-sorted;
+let L be non empty ModuleStr over R;
+let f be Function of X,L;
+let a be Element of R;
+func a '*' f -> Function of X,L means :defmu:
+  for x being Element of X holds it.x = a * f.x;
+existence
+proof
+defpred P[object,object] means
+   ex x being Element of X st $1 = x & $2 = a * f.x;
+A: now let o be object;
+   assume o in X; then
+   reconsider x = o as Element of X;
+   thus ex y being object st y in the carrier of L & P[o,y]
+     proof
+     take y = a * f.x;
+     thus y in the carrier of L;
+     thus thesis;
+     end;
+   end;
+consider h being Function of X,the carrier of L such that
+B: for x being object st x in X holds P[x,h.x] from FUNCT_2:sch 1(A);
+take h;
+now let x be Element of X;
+  P[x,h.x] by B;
+  hence h.x = a * f.x;
+  end;
+hence thesis;
+end;
+uniqueness
+proof
+let f1,f2 be Function of X,L;
+assume A: for x being Element of X holds f1.x = a * f.x;
+assume B: for x being Element of X holds f2.x = a * f.x;
+now let o be object;
+  assume o in X; then
+  reconsider x = o as Element of X;
+  thus f1.o = a * f.x by A .= f2.o by B;
+  end;
+hence f1 = f2 by FUNCT_2:12;
+end;
+end;
+
+registration
+let X be non empty set;
+let R be non empty Ring;
+let L be scalar-unital non empty ModuleStr over R;
+let f be Function of X,L;
+reduce (1.R) '*' f to f;
+reducibility
+proof
+now let o be object;
+  assume o in X; then
+  reconsider x = o as Element of X;
+  thus ((1.R) '*' f).o = (1.R) * (f.x) by defmu
+      .= f.o by VECTSP_1:def 17;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+end;
+
+theorem sd:
+for X being non empty set
+for R being Ring
+for L being scalar-distributive non empty ModuleStr over R
+for a,b being Element of R
+for f being Function of X,L holds (a + b) '*' f = (a '*' f) '+' (b '*' f)
+proof
+let X be non empty set, F be Ring;
+let L be scalar-distributive non empty ModuleStr over F;
+let a,b be Element of F, f be Function of X,L;
+now let o be object;
+  assume o in X;
+  then reconsider x = o as Element of X;
+  thus ((a + b) '*' f).o
+     = (a + b) * f.x by defmu
+    .= a * f.x + b * f.x by VECTSP_1:def 15
+    .= (a '*' f).x + (b * f.x) by defmu
+    .= (a '*' f).x + (b '*' f).x by defmu
+    .= ((a '*' f) '+' (b '*' f)).o by defp;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+
+theorem sa:
+for X being non empty set
+for R being Ring
+for L being scalar-associative non empty ModuleStr over R
+for a,b being Element of R
+for f being Function of X,L holds (a * b) '*' f = a '*' (b '*' f)
+proof
+let X be non empty set, F be Ring,
+    L be scalar-associative non empty ModuleStr over F,
+    a,b be Element of F, f be Function of X,L;
+now let o be object;
+  assume o in X;
+  then reconsider x = o as Element of X;
+  thus ((a * b) '*' f).o
+     = (a * b) * (f.x) by defmu
+    .= a * (b * f.x) by VECTSP_1:def 16
+    .= a * (b '*' f).x by defmu
+    .= (a '*' (b '*' f)).o by defmu;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+
+theorem vd:
+for X being non empty set
+for R being Ring
+for L being vector-distributive non empty ModuleStr over R
+for a,b being Element of R
+for f,g being Function of X,L holds a '*' (f '+' g) = (a '*' f) '+' (a '*' g)
+proof
+let X be non empty set, R be Ring,
+    L being vector-distributive non empty ModuleStr over R,
+    a,b be Element of R, f,g be Function of X,L;
+now let o be object;
+  assume o in X;
+  then reconsider x = o as Element of X;
+  thus (a '*' (f '+' g)).o
+     = a * ((f'+'g).x) by defmu
+    .= a * (f.x + g.x) by defp
+    .= a * f.x + a * g.x by VECTSP_1:def 14
+    .= a * f.x + (a '*' g).x by defmu
+    .= (a '*' f).x + (a '*' g).x by defmu
+    .= ((a '*' f) '+' (a '*' g)).o by defp;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+
+definition
+let X be non empty set;
+let R be non empty addLoopStr;
+let L be non empty ModuleStr over R;
+func mapAdd(X,L) -> BinOp of Funcs(X,the carrier of L) means :dA:
+  for f,g being Function of X,L holds it.(f,g) = f '+' g;
+existence
+proof
+defpred P[object,object,object] means
+  ex w,u,v being Function of X,L st w = $3 & u = $1 & v = $2 & w = u '+' v;
+A0: for x,y being object
+    st x in Funcs(X,the carrier of L) & y in Funcs(X,the carrier of L)
+    ex z being object st z in Funcs(X,the carrier of L) & P[x,y,z]
+    proof
+    let x,y be object;
+    assume x in Funcs(X,the carrier of L) & y in Funcs(X,the carrier of L);
+    then reconsider u = x, v = y as Function of X,the carrier of L
+         by FUNCT_2:66;
+    take z = u '+' v;
+    thus z in Funcs(X,the carrier of L) by FUNCT_2:8;
+    thus P[x,y,z];
+    end;
+consider h being Function of
+    [:Funcs(X,the carrier of L),Funcs(X,the carrier of L):],
+    Funcs(X,the carrier of L) such that
+A1: for x,y being object
+    st x in Funcs(X,the carrier of L) & y in Funcs(X,the carrier of L)
+    holds P[x,y,h.(x,y)] from BINOP_1:sch 1(A0);
+take h;
+now let f,g be Function of X,the carrier of L;
+  f in Funcs(X,the carrier of L) &
+  g in Funcs(X,the carrier of L) by FUNCT_2:8;
+  then P[f,g,h.(f,g)] by A1;
+  hence h.(f,g) = f '+' g;
+  end;
+hence thesis;
+end;
+uniqueness
+proof
+let w1,w2 be BinOp of Funcs(X,the carrier of L) such that
+A1: for f,g being Function of X,L holds w1.(f,g) = f '+' g and
+A2: for f,g being Function of X,L holds w2.(f,g) = f '+' g;
+now let o be object;
+  assume o in [:Funcs(X,the carrier of L),Funcs(X,the carrier of L):]; then
+  consider u,v being object such that
+  A3: u in Funcs(X,the carrier of L) & v in Funcs(X,the carrier of L) &
+      o = [u,v] by ZFMISC_1:def 2;
+  reconsider u,v as Function of X,the carrier of L by A3,FUNCT_2:66;
+  w1.(u,v) = u '+' v by A1 .= w2.(u,v) by A2;
+  hence w1.o = w2.o by A3;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+end;
+
+definition
+let X be non empty set;
+let R be non empty multLoopStr;
+let L be non empty ModuleStr over R;
+func mapMult(X,L) ->
+       Function of [:the carrier of R,Funcs(X,the carrier of L):],
+                   Funcs(X,the carrier of L) means :dM:
+  for f being Function of X,L, a being Element of R holds it.(a,f) = a '*' f;
+existence
+proof
+defpred P[object,object,object] means
+  ex u,w being Function of X,L, a being Element of R
+  st w = $3 & a = $1 & u = $2 & w = a '*' u;
+A0: for x,y being object
+    st x in the carrier of R & y in Funcs(X,the carrier of L)
+    ex z being object st z in Funcs(X,the carrier of L) & P[x,y,z]
+    proof
+    let x,y be object;
+    assume B: x in the carrier of R & y in Funcs(X,the carrier of L); then
+    reconsider a = x as Element of the carrier of R;
+    reconsider h = y as Element of Funcs(X,the carrier of L) by B;
+    take z = a '*' h;
+    thus z in Funcs(X,the carrier of L) by FUNCT_2:8;
+    thus P[x,y,z];
+    end;
+consider h being Function of
+    [:the carrier of R,Funcs(X,the carrier of L):],
+    Funcs(X,the carrier of L) such that
+A1: for x,y being object
+    st x in the carrier of R & y in Funcs(X,the carrier of L)
+    holds P[x,y,h.(x,y)] from BINOP_1:sch 1(A0);
+take h;
+now let a be Element of R, f be Function of X,L;
+  f in Funcs(X,the carrier of L) by FUNCT_2:8;
+  then P[a,f,h.(a,f)] by A1;
+  hence h.(a,f) = a '*' f;
+  end;
+hence thesis;
+end;
+uniqueness
+proof
+let v,w be Function of [:the carrier of R,Funcs(X,the carrier of L):],
+                       Funcs(X,the carrier of L) such that
+A1: for f being Function of X,L, a being Element of R holds v.(a,f) = a '*' f
+    and
+A2: for f being Function of X,L, a being Element of R holds w.(a,f) = a '*' f;
+now let o be object;
+  assume o in [:the carrier of R,Funcs(X,the carrier of L):]; then
+  consider a,h being object such that
+  A3: a in the carrier of R &
+      h in Funcs(X,the carrier of L) & o = [a,h] by ZFMISC_1:def 2;
+  reconsider a as Element of the carrier of R by A3;
+  reconsider h as Element of Funcs(X,the carrier of L) by A3;
+  v.(a,h) = a '*' h by A1 .= w.(a,h) by A2;
+  hence v.o = w.o by A3;
+  end;
+hence thesis by FUNCT_2:12;
+end;
+end;
+
+definition
+let X be non empty set;
+let R be non empty doubleLoopStr;
+let L be non empty ModuleStr over R;
+func Maps(X,L) -> strict ModuleStr over R means :defmap:
+  the carrier of it = Funcs(X,the carrier of L) &
+  the addF of it = mapAdd(X,L) &
+  the ZeroF of it = (X --> 0.L) &
+  the lmult of it = mapMult(X,L);
+existence
+proof
+reconsider o = (X --> 0.L) as Element of Funcs(X,the carrier of L)
+  by FUNCT_2:8;
+take ModuleStr (#Funcs(X,the carrier of L),mapAdd(X,L),
+                 o,mapMult(X,L)#);
+thus thesis;
+end;
+uniqueness;
+end;
+
+definition
+let R be non empty doubleLoopStr;
+let L1,L2 be non empty ModuleStr over R;
+func Maps(L1,L2) equals
+  Maps(the carrier of L1,L2);
+coherence;
+end;
+
+registration
+let X be non empty set;
+let R be non empty doubleLoopStr;
+let L be non empty ModuleStr over R;
+cluster Maps(X,L) -> non empty;
+coherence
+proof
+set f = the Function of X,L;
+f in Funcs(X,the carrier of L) by FUNCT_2:8;
+hence thesis by defmap;
+end;
+end;
+
+registration
+let X be non empty set;
+let R be Ring;
+let L be non empty Abelian ModuleStr over R;
+cluster Maps(X,L) -> Abelian;
+coherence
+proof
+set V = Maps(X,L);
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let x,y be Element of V;
+  reconsider f = x, g = y as Function of X,the carrier of L by A,FUNCT_2:66;
+  thus x+y = f'+'g by A,dA .= y + x by A,dA;
+  end;
+hence V is Abelian by RLVECT_1:def 2;
+end;
+end;
+
+registration
+let X be non empty set;
+let R be Ring;
+let L be non empty add-associative ModuleStr over R;
+cluster Maps(X,L) -> add-associative;
+coherence
+proof
+set V = Maps(X,L);
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let x,y,z be Element of V;
+  reconsider f=x,g=y,h=z as Function of X,the carrier of L by A,FUNCT_2:66;
+  B: x + y = f '+' g & y + z = g '+' h by A,dA;
+  hence (x+y)+z = (f'+'g)'+'h by A,dA
+               .= f'+'(g'+'h) by ass .= x+(y+z) by B,A,dA;
+  end;
+hence thesis by RLVECT_1:def 3;
+end;
+end;
+
+registration
+let X be non empty set;
+let R be Ring;
+let L be non empty right_zeroed ModuleStr over R;
+cluster Maps(X,L) -> right_zeroed;
+coherence
+proof
+set V = Maps(X,L), g = X --> 0.L;
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let x be Element of V;
+  reconsider f = x as Function of X,the carrier of L by A,FUNCT_2:66;
+  B: now let o be object;
+     assume o in X;
+     then reconsider x = o as Element of X;
+     thus (f'+'g).o = f.x + g.x by defp .= f.o by RLVECT_1:def 4;
+     end;
+  thus x + 0.V = f '+' g by A,dA .= x by B,FUNCT_2:12;
+  end;
+hence thesis by RLVECT_1:def 4;
+end;
+end;
+
+registration
+let X be non empty set;
+let R be Ring;
+let L be add-associative right_zeroed right_complementable
+                                                non empty ModuleStr over R;
+cluster Maps(X,L) -> right_complementable;
+coherence
+proof
+set V = Maps(X,L);
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let x be Element of V;
+  reconsider f = x as Function of X,the carrier of L by A,FUNCT_2:66;
+  reconsider y = '-'f as Element of V by A,FUNCT_2:8;
+  x + y = f '+' ('-'f) by A,dA .= 0.V by rc,A;
+  hence x is right_complementable by ALGSTR_0:def 11;
+  end;
+hence thesis by ALGSTR_0:def 16;
+end;
+end;
+
+registration
+let X be non empty set;
+let R be Ring;
+let L be scalar-distributive non empty ModuleStr over R;
+cluster Maps(X,L) -> scalar-distributive;
+coherence
+proof
+set V = Maps(X,L);
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let a,b be Element of R, v be Element of V;
+  reconsider f = v as Function of X,L by A,FUNCT_2:66;
+  a * v = (the lmult of V).(a,v) & b * v = (the lmult of V).(b,v)
+     by VECTSP_1:def 12; then
+  B: a '*' f = a * v & b '*' f = b * v by A,dM;
+  thus (a + b) * v
+     = mapMult(X,L).(a+b,f) by A,VECTSP_1:def 12
+    .= (a + b) '*' f by dM
+    .= (a '*' f) '+' (b '*' f) by sd
+    .= a * v + b * v by B,A,dA;
+  end;
+hence thesis by VECTSP_1:def 15;
+end;
+end;
+
+registration
+let X be non empty set;
+let R be Ring;
+let L be scalar-associative non empty ModuleStr over R;
+cluster Maps(X,L) -> scalar-associative;
+coherence
+proof
+set V = Maps(X,L);
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let a,b be Element of R, v be Element of V;
+  reconsider f = v as Function of X,L by A,FUNCT_2:66;
+  a * v = (the lmult of V).(a,v) & b * v = (the lmult of V).(b,v)
+     by VECTSP_1:def 12; then
+  B: b '*' f = b * v by A,dM;
+  thus (a * b) * v
+     = (the lmult of V).(a*b,v) by VECTSP_1:def 12
+    .= (a * b) '*' f by A,dM
+    .= a '*' (b '*' f) by sa
+    .= (the lmult of V).(a,b*v) by A,B,dM
+    .= a * (b * v) by VECTSP_1:def 12;
+  end;
+hence thesis by VECTSP_1:def 16;
+end;
+end;
+
+registration
+let X be non empty set;
+let R be Ring;
+let L be vector-distributive non empty ModuleStr over R;
+cluster Maps(X,L) -> vector-distributive;
+coherence
+proof
+set V = Maps(X,L);
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let a be Element of R, u,v be Element of V;
+  reconsider f = u, g = v as Function of X,L by A,FUNCT_2:66;
+  a * v = (the lmult of V).(a,v) & a * u = (the lmult of V).(a,u)
+     by VECTSP_1:def 12; then
+  B: a '*' f = a * u & a '*' g = a * v by A,dM;
+  C: f '+' g = u + v by A,dA;
+  thus a * (u + v)
+     = mapMult(X,L).(a,f'+'g) by A,C, VECTSP_1:def 12
+    .= a '*' (f '+' g) by dM
+    .= (a '*' f) '+' (a '*' g) by vd
+    .= a * u + a * v by B,A,dA;
+  end;
+hence thesis by VECTSP_1:def 14;
+end;
+end;
+
+registration
+let X be non empty set;
+let R be Ring;
+let L be scalar-unital non empty ModuleStr over R;
+cluster Maps(X,L) -> scalar-unital;
+coherence
+proof
+set V = Maps(X,L);
+A: the carrier of V = Funcs(X,the carrier of L) &
+   the addF of V = mapAdd(X,L) &
+   the ZeroF of V = (X --> 0.L) &
+   the lmult of V = mapMult(X,L) by defmap;
+now let v be Element of V;
+  reconsider f = v as Function of X,L by A,FUNCT_2:66;
+  thus (1.R) * v
+     = (the lmult of V).(1.R,v) by VECTSP_1:def 12
+    .= (1.R) '*' f by A,dM
+    .= v;
+  end;
+hence thesis by VECTSP_1:def 17;
+end;
+end;
+
+definition
+let R be Ring;
+let U,V be VectSp of R;
+redefine func Maps(U,V) -> VectSp of R;
+coherence;
+end;
+
+theorem LT1:
+for R being commutative Ring
+for U,V being VectSp of R
+for f,g being linear-transformation of U,V
+holds f '+' g is linear-transformation of U,V
+proof
+let R be commutative Ring, U,V be VectSp of R,
+    f,g be linear-transformation of U,V;
+A: now let x,y be Element of U;
+  thus (f '+' g).(x+y)
+     = f.(x+y) + g.(x+y) by defp
+    .= (f.x + f.y) + g.(x+y) by VECTSP_1:def 20
+    .= (f.x + f.y) + (g.x + g.y) by VECTSP_1:def 20
+    .= f.x + (f.y + (g.x + g.y)) by RLVECT_1:def 3
+    .= f.x + ((f.y + g.y) + g.x) by RLVECT_1:def 3
+    .= (f.x + g.x) + (f.y + g.y) by RLVECT_1:def 3
+    .= (f '+' g).x + (f.y + g.y) by defp
+    .= (f '+' g).x + (f '+' g).y by defp;
+  end;
+now let a be Element of R, x be Element of U;
+  thus (f '+' g).(a*x)
+     = f.(a*x) + g.(a*x) by defp
+    .= (a * f.x) + g.(a*x) by MOD_2:def 2
+    .= (a * f.x) + (a * g.x) by MOD_2:def 2
+    .= a * (f.x + g.x) by VECTSP_1:def 14
+    .= a * ((f '+' g).x) by defp;
+   end;
+hence thesis by A,MOD_2:def 2,VECTSP_1:def 20;
+end;
+
+theorem LT2:
+for R being commutative Ring
+for U,V being VectSp of R
+for f being linear-transformation of U,V
+for a being Element of R
+holds a '*' f is linear-transformation of U,V
+proof
+let R be commutative Ring, U,V be VectSp of R,
+    f be linear-transformation of U,V, a be Element of R;
+A: now let x,y be Element of U;
+  thus (a '*' f).(x+y)
+     = a * f.(x+y) by defmu
+    .= a * (f.x + f.y) by VECTSP_1:def 20
+    .= (a * f.x) + (a * f.y) by VECTSP_1:def 14
+    .= (a '*' f).x + (a * f.y) by defmu
+    .= (a '*' f).x + (a '*' f).y by defmu;
+  end;
+now let b be Element of R, x be Element of U;
+  thus (a '*' f).(b*x)
+     = a * f.(b*x) by defmu
+    .= a * (b * f.x) by MOD_2:def 2
+    .= (a * b) * f.x by VECTSP_1:def 16
+    .= b * (a * f.x) by VECTSP_1:def 16
+    .= b * ((a '*' f).x) by defmu;
+   end;
+hence thesis by A,MOD_2:def 2,VECTSP_1:def 20;
+end;
+
+definition
+let F be Field;
+let U,V be VectSp of F;
+func LinTrans(U,V) -> strict Subspace of Maps(U,V) means
+  the carrier of it = the set of all f where f is linear-transformation of U,V;
+existence
+proof
+set M = the set of all f where f is linear-transformation of U,V;
+set f = the linear-transformation of U,V;
+now let o be object;
+  assume o in M; then
+  consider g being linear-transformation of U,V such that
+  A: o = g;
+  g in Funcs(the carrier of U,the carrier of V) by FUNCT_2:8;
+  hence o in the carrier of Maps(U,V) by A,defmap;
+  end; then
+M c= the carrier of Maps(U,V); then
+reconsider M as Subset of Maps(U,V);
+A: f in M;
+B: now let v,u be Element of Maps(U,V);
+   assume B0: v in M & u in M; then
+   consider g1 being linear-transformation of U,V such that
+   B1: v = g1;
+   consider g2 being linear-transformation of U,V such that
+   B2: u = g2 by B0;
+   B3: g1 '+' g2 is linear-transformation of U,V by LT1;
+   v + u
+      = mapAdd(the carrier of U,V).(g1,g2) by B1,B2,defmap
+     .= g1 '+' g2 by dA;
+   hence v + u in M by B3;
+   end;
+now let a be Element of F, v being Element of Maps(U,V);
+   assume v in M; then
+   consider g1 being linear-transformation of U,V such that
+   C1: v = g1;
+   C2: a '*' g1 is linear-transformation of U,V by LT2;
+   a * v
+      = (the lmult of Maps(the carrier of U,V)).(a,v) by VECTSP_1:def 12
+     .= mapMult(the carrier of U,V).(a,g1) by C1,defmap
+     .= a '*' g1 by dM;
+   hence a * v in M by C2;
+   end;
+hence thesis by A,B,VECTSP_4:def 1,VECTSP_4:34;
+end;
+uniqueness by VECTSP_4:29;
+end;
+
+definition
+let F be Field;
+let V be VectSp of F;
+func End(V) -> Subspace of Maps(V,V) equals
+  LinTrans(V,V);
+coherence;
+end;
+
